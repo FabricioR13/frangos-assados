@@ -444,6 +444,20 @@
   $('ano').textContent = new Date().getFullYear();
 
   const fp = prodPor('frango-com-polenta'); if (fp && fp.img) $('fotoHero').src = fp.img;
+  /* quando o painel muda algo (outra aba ou ao voltar para o site), o site atualiza sozinho */
+  function recarregarDados() {
+    Object.assign(db, CF.carregar());
+    Object.assign(cfg, db.config);
+    const f = prodPor('frango-com-polenta'); $('fotoHero').src = (f && f.img) || 'img/frango.jpg';
+    $('enderecoTxt').textContent = cfg.endereco;
+    $('telLink').textContent = cfg.telefone;
+    carrinho = carrinho.filter(c => prodPor(c.pid) && prodPor(c.pid).ativo);
+    status(); atualizar();
+  }
+  window.addEventListener('storage', recarregarDados);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) recarregarDados(); });
+  window.addEventListener('pageshow', e => { if (e.persisted) recarregarDados(); });
+
   status(); atualizar(); abrirPorLink();
   window.addEventListener('hashchange', abrirPorLink);
 </script>

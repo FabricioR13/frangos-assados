@@ -681,6 +681,7 @@ function grafBarras(el, dados, op = {}) {
 }
 
 /* ---------- PRODUTOS ---------- */
+function autoSalvar() { CF.salvar(db); toast('Salvo ✓ Já aparece no site'); }
 function produtos() {
   $('main').innerHTML = `${topoCel()}
     <div class="cab"><div><h1>Produtos</h1><p>Altere preço, descrição e o que aparece no site</p></div></div>
@@ -692,17 +693,17 @@ function produtos() {
         ${p.img ? `<button class="btn btn-sec btn-peq" style="color:var(--off)" onclick="removerFoto(${i})">🗑 Remover</button>` : '<small style="color:var(--muted);font-size:11.5px">Sem foto: o site mostra o logo</small>'}
       </div>
         <div>
-          <div class="linha"><div><label class="campo" style="margin-top:0">Nome</label><input class="inp" value="${p.nome}" onchange="db.produtos[${i}].nome=this.value"></div>
-            <div style="max-width:150px"><label class="campo" style="margin-top:0">Preço (R$)</label><input class="inp num" inputmode="decimal" value="${p.preco.toFixed(2).replace('.', ',')}" onchange="db.produtos[${i}].preco=parseFloat(this.value.replace(',','.'))||0"></div></div>
-          <label class="campo">Descrição</label><textarea class="inp" rows="2" onchange="db.produtos[${i}].desc=this.value">${p.desc}</textarea>
+          <div class="linha"><div><label class="campo" style="margin-top:0">Nome</label><input class="inp" value="${p.nome}" onchange="db.produtos[${i}].nome=this.value;autoSalvar()"></div>
+            <div style="max-width:150px"><label class="campo" style="margin-top:0">Preço (R$)</label><input class="inp num" inputmode="decimal" value="${p.preco.toFixed(2).replace('.', ',')}" onchange="db.produtos[${i}].preco=parseFloat(this.value.replace(',','.'))||0;autoSalvar()"></div></div>
+          <label class="campo">Descrição</label><textarea class="inp" rows="2" onchange="db.produtos[${i}].desc=this.value;autoSalvar()">${p.desc}</textarea>
           <div class="linha" style="margin-top:10px;align-items:center">
-            <div><label class="campo" style="margin-top:0">Selo (opcional)</label><input class="inp" value="${p.destaque || ''}" placeholder="Ex.: Mais pedido" onchange="db.produtos[${i}].destaque=this.value"></div>
-            <div><label class="tog"><input type="checkbox" ${p.ativo ? 'checked' : ''} onchange="db.produtos[${i}].ativo=this.checked"> Aparece no site</label>
+            <div><label class="campo" style="margin-top:0">Selo (opcional)</label><input class="inp" value="${p.destaque || ''}" placeholder="Ex.: Mais pedido" onchange="db.produtos[${i}].destaque=this.value;autoSalvar()"></div>
+            <div><label class="tog"><input type="checkbox" ${p.ativo ? 'checked' : ''} onchange="db.produtos[${i}].ativo=this.checked;autoSalvar()"> Aparece no site</label>
               <div style="font-size:12.5px;color:var(--muted);margin-top:4px">Baixa do estoque: ${Object.entries(p.consumo).map(([k, v]) => `${CF.num(v)} ${itemPor(k).nome.toLowerCase()}`).join(' + ')}</div></div>
           </div>
         </div>
       </div>`).join('')}</div>
-    <div style="margin-top:14px;display:flex;justify-content:flex-end"><button class="btn btn-pri" onclick="CF.salvar(db);toast('Produtos salvos ✓')">Salvar alterações</button></div>`;
+    <p style="margin-top:14px;text-align:right;font-size:13px;color:var(--muted)">✓ As alterações são salvas sozinhas e já aparecem no site.</p>`;
 }
 
 function trocarFoto(i, input) {
@@ -815,6 +816,7 @@ function config() {
       </div>
     </div>
     <div style="margin-top:14px;display:flex;justify-content:flex-end"><button class="btn btn-pri" onclick="salvarConfig()">Salvar configurações</button></div>`;
+  document.querySelectorAll('#main .card .inp').forEach(el => el.addEventListener('change', salvarConfig));
 }
 function salvarConfig() {
   const c = db.config;
