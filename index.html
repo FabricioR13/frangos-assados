@@ -250,8 +250,9 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="js/dados.js"></script>
+<script src="js/dados.js?v=20261114d"></script>
 <script>
+  if (!window.CF || !CF.fotoHTML) { if (!sessionStorage.getItem('recarregou')) { sessionStorage.setItem('recarregou', '1'); location.reload(); } }
   const db = CF.carregar();
   const cfg = db.config;
   let carrinho = [];           // [{pid, qtd}]

@@ -251,8 +251,9 @@
 <div class="fundo" id="fundo"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/dados.js"></script>
+<script src="js/dados.js?v=20261114d"></script>
 <script>
+  if (!window.CF || !CF.fotoHTML) { if (!sessionStorage.getItem('recarregou')) { sessionStorage.setItem('recarregou', '1'); location.reload(); } }
 let db = CF.carregar();
 const $ = id => document.getElementById(id);
 const ITENS = CF.ITENS_ESTOQUE;

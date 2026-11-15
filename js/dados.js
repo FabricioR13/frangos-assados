@@ -1,7 +1,7 @@
 /* Frangos & Assados — dados da demonstração (salvos no navegador)
    Na versão final estes dados ficam no Firebase. */
 (function () {
-  const CHAVE = 'frangos_assados_demo_v5';
+  const CHAVE = 'frangos_assados_demo_v7';
 
   const ITENS_ESTOQUE = [
     { id: 'frango',   nome: 'Frangos',            un: 'un',     icone: '🍗', aviso1: 10, aviso2: 5 },
@@ -9,7 +9,7 @@
     { id: 'maionese', nome: 'Salada de maionese', un: 'potes 500g', icone: '🥗', aviso1: 5, aviso2: 2 },
     { id: 'coca',     nome: 'Coca-Cola 2 L',      un: 'garrafas', icone: '🥤', aviso1: 6, aviso2: 3, naoPerecivel: true },
     { id: 'cocazero', nome: 'Coca-Cola Zero 2 L', un: 'garrafas', icone: '🥤', aviso1: 4, aviso2: 2, naoPerecivel: true },
-    { id: 'guarana',  nome: 'Guaraná 2 L',        un: 'garrafas', icone: '🥤', aviso1: 4, aviso2: 2, naoPerecivel: true }
+    { id: 'guarana',  nome: 'Charrua 2 L',        un: 'garrafas', icone: '🥤', aviso1: 4, aviso2: 2, naoPerecivel: true }
   ];
 
   const PRODUTOS_PADRAO = [
@@ -25,12 +25,12 @@
     { id: 'salada-de-maionese', nome: 'Salada de maionese', preco: 14, img: 'img/maionese.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
       desc: 'Porção perfeita para um almoço. Salada fresquinha feita no dia, com cebola e salsinha trituradas e temperada com carinho! Porção de 500 g.',
       consumo: { maionese: 1 }, ativo: true, destaque: 'Feita no dia', categoria: 'Acompanhamentos' },
-    { id: 'coca-cola-2l', nome: 'Coca-Cola 2 L', preco: 15, img: 'img/coca.jpg',
+    { id: 'coca-cola-2l', nome: 'Coca-Cola 2 L', preco: 15, img: 'img/refri-coca.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
       desc: 'Refrigerante Coca-Cola, garrafa de 2 litros.', consumo: { coca: 1 }, ativo: true, destaque: '', categoria: 'Bebidas' },
-    { id: 'coca-cola-zero-2l', nome: 'Coca-Cola Zero 2 L', preco: 15, img: 'img/coca-zero.jpg',
+    { id: 'coca-cola-zero-2l', nome: 'Coca-Cola Zero 2 L', preco: 15, img: 'img/refri-coca-zero.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
       desc: 'Refrigerante Coca-Cola sem açúcar, garrafa de 2 litros.', consumo: { cocazero: 1 }, ativo: true, destaque: '', categoria: 'Bebidas' },
-    { id: 'guarana-2l', nome: 'Guaraná 2 L', preco: 10, img: 'img/guarana.jpg',
-      desc: 'Refrigerante de guaraná, garrafa de 2 litros.', consumo: { guarana: 1 }, ativo: true, destaque: '', categoria: 'Bebidas' }
+    { id: 'guarana-2l', nome: 'Guaraná Charrua 2 L', preco: 10, img: 'img/refri-charrua.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
+      desc: 'Refrigerante Guaraná Charrua, garrafa de 2 litros.', consumo: { guarana: 1 }, ativo: true, destaque: '', categoria: 'Bebidas' }
   ];
 
   const CONFIG_PADRAO = {
