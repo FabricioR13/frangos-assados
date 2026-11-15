@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel da loja — Frangos &amp; Assados</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" href="img/logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF6F0; --card:#fff; --ink:#2B1A12; --ink2:#6B5547; --muted:#9A877A; --line:#EFE3D6;
+    --brand:#E2571C; --brand-d:#C2440F; --brand-l:#FDE9DC;
+    --ok:#2E8B57; --ok-l:#E3F4EA; --warn:#B7791F; --warn-l:#FDF3DD; --off:#B9442E; --off-l:#FBE6E1;
+    --info:#2F6FB3; --info-l:#E4EEF9;
+    --radius:16px; --shadow:0 4px 18px rgba(91,49,20,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Nunito Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:15px}
+  h1,h2,h3,.oswald{font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.2px}
+  button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  input,select,textarea{font:inherit;color:inherit}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* login */
+  #login{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,#FFF8EF,#FDE9DC);display:grid;place-items:center;padding:20px}
+  .login-card{background:#fff;border-radius:24px;box-shadow:0 20px 60px rgba(91,49,20,.15);padding:30px 26px;width:min(380px,100%);text-align:center}
+  .login-card img{width:96px;height:96px;border-radius:50%}
+  .login-card h1{font-size:24px;margin:12px 0 2px}
+  .login-card p{color:var(--ink2);font-size:14px;margin-bottom:16px}
+  .login-card .inp{margin-bottom:10px;text-align:left}
+  .demo-aviso{background:var(--warn-l);color:var(--warn);font-size:12.5px;font-weight:700;border-radius:10px;padding:8px 10px;margin-bottom:12px}
+  .tf-cred{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:11.5px;color:var(--muted);text-decoration:none}
+
+  /* estrutura */
+  .app{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+  nav.lado{background:#fff;border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:4px}
+  .lado .marca{display:flex;align-items:center;gap:10px;padding:4px 6px 18px}
+  .lado .marca img{width:42px;height:42px;border-radius:50%}
+  .lado .marca b{font-family:'Oswald';font-size:16px;line-height:1.1;display:block}
+  .lado .marca span{font-size:12px;color:var(--muted)}
+  .aba{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;font-weight:700;color:var(--ink2);text-align:left;width:100%}
+  .aba .i{font-size:18px;width:22px;text-align:center}
+  .aba:hover{background:var(--bg)}
+  .aba.on{background:var(--brand-l);color:var(--brand-d)}
+  .aba .cont{margin-left:auto;background:var(--brand);color:#fff;border-radius:99px;font-size:11.5px;padding:1px 8px}
+  .lado .rod{margin-top:auto;font-size:11.5px;color:var(--muted);padding:8px}
+  .lado .rod a{color:var(--muted)}
+  main{padding:24px 28px 100px;min-width:0}
+  .cab{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .cab h1{font-size:26px}
+  .cab p{color:var(--ink2);font-size:14px}
+  .btn{display:inline-flex;align-items:center;gap:7px;font-weight:800;border-radius:12px;padding:11px 16px;font-size:14.5px;white-space:nowrap}
+  .btn-pri{background:var(--brand);color:#fff}
+  .btn-pri:hover{background:var(--brand-d)}
+  .btn-sec{background:#fff;border:1.5px solid var(--line)}
+  .btn-sec:hover{border-color:#e0cdb9}
+  .btn-ok{background:var(--ok);color:#fff}
+  .btn-peq{padding:7px 11px;font-size:13px;border-radius:10px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+  .card h3{font-size:17px;margin-bottom:2px}
+  .card .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .grid{display:grid;gap:14px}
+  .g4{grid-template-columns:repeat(4,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  .vazio{color:var(--muted);text-align:center;padding:24px}
+
+  /* números */
+  .kpi .rot{font-size:13px;color:var(--ink2);font-weight:700;display:flex;align-items:center;gap:6px}
+  .kpi .val{font-family:'Oswald';font-size:34px;line-height:1.1;margin-top:6px}
+  .kpi .det{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .kpi .det b{color:var(--ink2)}
+  .sobe{color:var(--ok);font-weight:800} .desce{color:var(--off);font-weight:800}
+
+  /* estoque */
+  .estq-card{display:flex;flex-direction:column;gap:10px}
+  .estq-card .topo{display:flex;align-items:center;gap:10px}
+  .estq-card .ic{width:44px;height:44px;border-radius:12px;background:var(--brand-l);display:grid;place-items:center;font-size:22px}
+  .estq-card .saldo{font-family:'Oswald';font-size:36px;line-height:1}
+  .estq-card .un{font-size:13px;color:var(--muted)}
+  .barra-est{height:8px;background:#F3EAE0;border-radius:99px;overflow:hidden}
+  .barra-est i{display:block;height:100%;background:var(--ok);border-radius:99px}
+  .barra-est i.baixo{background:var(--off)}
+  .selo{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;padding:3px 9px;border-radius:99px}
+  .s-ok{background:var(--ok-l);color:var(--ok)} .s-warn{background:var(--warn-l);color:var(--warn)} .s-off{background:var(--off-l);color:var(--off)} .s-info{background:var(--info-l);color:var(--info)} .s-cinza{background:#F1ECE6;color:var(--ink2)}
+  .estq-card .acoes{display:flex;gap:8px}
+  .estq-card.alerta-a1{border-color:#F1D08F}
+  .estq-card.alerta-a2,.estq-card.alerta-zero{border-color:#EBB0A3;background:#FFFBFA}
+  .aviso-cfg{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);background:var(--bg);border-radius:10px;padding:8px 10px;text-align:left}
+  .aviso-cfg span{margin-left:auto;color:var(--brand-d);font-weight:800;text-decoration:underline;text-underline-offset:2px}
+  .faixa{position:sticky;top:0;z-index:20;background:var(--warn-l);color:#7a4f0f;border-bottom:1px solid #F1D08F;padding:10px 28px;font-size:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .faixa[hidden]{display:none}
+  .faixa button{margin-left:auto;font-weight:800;text-decoration:underline;text-underline-offset:2px;color:#7a4f0f}
+  .aviso-pop{text-align:center}
+  .aviso-pop .sino{width:64px;height:64px;border-radius:50%;background:var(--warn-l);display:grid;place-items:center;font-size:32px;margin:0 auto 10px;animation:balanca 1s ease 2}
+  @keyframes balanca{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}
+  .aviso-linha{display:flex;align-items:center;gap:12px;text-align:left;background:var(--warn-l);border-radius:12px;padding:12px;margin-top:10px;font-size:15px}
+  .aviso-linha.a2,.aviso-linha.zero{background:var(--off-l)}
+  .estq-card .acoes button{flex:1;justify-content:center}
+
+  /* tabelas */
+  .tab-wrap{overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:800;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:10px;border-bottom:1px solid #F5EDE4;vertical-align:middle}
+  td.r,th.r{text-align:right}
+  .ent{color:var(--ok);font-weight:800} .sai{color:var(--off);font-weight:800}
+
+  /* filtros */
+  .filtros{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+  .chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;font-weight:700;font-size:13.5px}
+  .chip.on{border-color:var(--brand);background:var(--brand-l);color:var(--brand-d)}
+  .inp{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;outline:none;font-size:15px}
+  .inp:focus{border-color:var(--brand)}
+  select.inp{appearance:auto}
+  label.campo{display:block;font-size:13px;font-weight:800;color:var(--ink2);margin:12px 0 5px}
+
+  /* pedidos */
+  .pedidos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+  .ped{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px}
+  .ped .l1{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .ped .cod{font-family:'Oswald';font-size:18px}
+  .ped .hora{font-family:'Oswald';font-size:20px;color:var(--brand-d)}
+  .ped .cli{font-weight:800}
+  .ped ul{list-style:none;font-size:14px;color:var(--ink2)}
+  .ped .obs{font-size:13px;background:var(--warn-l);color:var(--warn);border-radius:8px;padding:6px 9px}
+  .ped .l3{display:flex;align-items:center;justify-content:space-between;gap:6px;border-top:1px dashed var(--line);padding-top:10px;flex-wrap:wrap}
+  .ped .tot{font-family:'Oswald';font-size:19px}
+  .ped .bts{display:flex;gap:6px;flex-wrap:wrap}
+
+  /* gráficos */
+  .graf{position:relative}
+  .graf svg{width:100%;height:auto;display:block;overflow:visible}
+  .graf .eixo{font-size:13px;fill:#9A877A;font-family:'Nunito Sans'}
+  .graf .rotv{font-size:14px;fill:#6B5547;font-weight:700;font-family:'Nunito Sans'}
+  .graf .grade-l{stroke:#F1E7DC;stroke-width:1}
+  .graf .barra{fill:var(--brand);transition:opacity .15s}
+  .graf .barra.fraca{fill:#F2B596}
+  .graf .alvo{fill:transparent;cursor:pointer}
+  .dica{position:absolute;pointer-events:none;background:var(--ink);color:#fff;border-radius:10px;padding:8px 11px;font-size:12.5px;line-height:1.35;white-space:nowrap;transform:translate(-50%,-110%);opacity:0;transition:opacity .12s;z-index:5}
+  .dica b{font-size:14px}
+  .hbar{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:end;padding:7px 0;font-size:14px}
+  .hbar .trilho{grid-column:1/-1}
+  .hbar .trilho{height:14px;background:#F6EEE6;border-radius:99px;overflow:hidden}
+  .hbar .trilho i{display:block;height:100%;background:var(--brand);border-radius:0 4px 4px 0}
+  .alternar{font-size:12.5px;font-weight:800;color:var(--brand-d);text-decoration:underline;text-underline-offset:2px}
+  .tab-graf{display:none;margin-top:8px}
+  .graf-wrap.tabela .tab-graf{display:block}
+  .graf-wrap.tabela .graf{display:none}
+
+  /* produtos */
+  .prod-ed{display:grid;grid-template-columns:130px 1fr;gap:16px;align-items:start}
+  .foto-ed{display:flex;flex-direction:column;gap:6px}
+  .foto-ed img{width:130px;height:130px;border-radius:14px;object-fit:cover;border:1px solid var(--line)}
+  .foto-ed img.sem-foto{object-fit:contain;padding:16px;background:#fff}
+  .foto-ed .btn{justify-content:center;cursor:pointer}
+  @media (max-width:560px){.prod-ed{grid-template-columns:1fr}.foto-ed{flex-direction:row;flex-wrap:wrap;align-items:center}.foto-ed img{width:96px;height:96px}}
+  .linha{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+  .linha > div{flex:1;min-width:140px}
+  .tog{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer}
+  .tog input{width:20px;height:20px;accent-color:var(--brand)}
+
+  /* modal */
+  .fundo{position:fixed;inset:0;background:rgba(43,26,18,.45);z-index:70;display:none;align-items:flex-end;justify-content:center;padding:0}
+  .fundo.on{display:flex}
+  .modal{background:#fff;border-radius:22px 22px 0 0;width:min(520px,100%);max-height:92vh;overflow:auto;padding:20px 20px calc(20px + env(safe-area-inset-bottom))}
+  @media (min-width:700px){.fundo{align-items:center}.modal{border-radius:22px}}
+  .modal h2{font-size:22px;margin-bottom:4px}
+  .modal .sub{color:var(--ink2);font-size:14px}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .seg button{border:1.5px solid var(--line);border-radius:12px;padding:10px 6px;font-weight:800;font-size:13.5px;text-align:center}
+  .seg button.on{border-color:var(--brand);background:var(--brand-l);color:var(--brand-d)}
+  .seg2{grid-template-columns:1fr 1fr}
+  .seg2 button.on.e{border-color:var(--ok);background:var(--ok-l);color:var(--ok)}
+  .seg2 button.on.s{border-color:var(--off);background:var(--off-l);color:var(--off)}
+  .qtd-grande{display:flex;align-items:center;gap:10px}
+  .qtd-grande button{width:52px;height:52px;border-radius:14px;background:var(--brand-l);color:var(--brand-d);font-size:26px;font-weight:800;flex:none}
+  .qtd-grande input{text-align:center;font-family:'Oswald';font-size:26px}
+  .atalhos{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .modal .rod{display:flex;gap:10px;margin-top:18px}
+  .modal .rod .btn{flex:1;justify-content:center;padding:14px}
+  .balcao-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F5EDE4}
+  .balcao-item img{width:52px;height:52px;border-radius:10px;object-fit:cover}
+  .balcao-item .t{flex:1}
+  .balcao-item small{color:var(--muted)}
+  .q{display:flex;align-items:center;background:var(--brand-l);border-radius:12px}
+  .q button{width:40px;height:40px;font-size:22px;font-weight:800;color:var(--brand-d)}
+  .q span{min-width:26px;text-align:center;font-weight:800}
+
+  .toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:11px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;transition:.25s;z-index:120;pointer-events:none}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  /* celular */
+  @media (max-width:900px){
+    .app{grid-template-columns:1fr}
+    nav.lado{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;padding:6px 6px calc(6px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);z-index:60;justify-content:space-around;gap:0}
+    .lado .marca,.lado .rod{display:none}
+    .aba{flex-direction:column;gap:2px;font-size:11px;padding:6px 4px;text-align:center;flex:1;position:relative}
+    .aba .i{font-size:20px}
+    .aba .cont{position:absolute;top:2px;right:18%;font-size:10px;padding:0 6px}
+    .aba[data-aba="config"]{display:none}
+    main{padding:16px 14px 100px}
+    .faixa{padding:10px 14px;font-size:13px}
+    .g4{grid-template-columns:repeat(2,1fr)} .g3,.g2{grid-template-columns:1fr}
+    .kpi .val{font-size:28px}
+    .topo-cel{display:flex!important}
+  }
+  .topo-cel{display:none;align-items:center;gap:10px;margin-bottom:12px}
+  .topo-cel img{width:36px;height:36px;border-radius:50%}
+  .topo-cel b{font-family:'Oswald';font-size:16px}
+  .topo-cel button{margin-left:auto;font-size:20px;width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-card">
+    <img src="img/logo.png" alt="Logo">
+    <h1>Painel da loja</h1>
+    <p>Frangos &amp; Assados</p>
+    <div class="demo-aviso">Demonstração: é só tocar em Entrar.</div>
+    <input class="inp" type="email" value="contato@frangoseassados.com.br" aria-label="E-mail">
+    <input class="inp" type="password" value="demonstracao" aria-label="Senha">
+    <button class="btn btn-pri" style="width:100%;justify-content:center;padding:14px" onclick="entrar()">Entrar</button>
+    <a class="tf-cred" href="https://www.tfsolutions.com.br" target="_blank" rel="noopener">Sistema desenvolvido por <b>TF Solutions</b></a>
+  </div>
+</div>
+
+<div class="app" id="app" hidden>
+  <nav class="lado">
+    <div class="marca"><img src="img/logo.png" alt=""><div><b>Frangos &amp; Assados</b><span>Painel da loja</span></div></div>
+    <button class="aba on" data-aba="inicio"><span class="i">🏠</span>Início</button>
+    <button class="aba" data-aba="pedidos"><span class="i">🧾</span>Pedidos<span class="cont" id="contNovos" hidden></span></button>
+    <button class="aba" data-aba="estoque"><span class="i">📦</span>Estoque</button>
+    <button class="aba" data-aba="relatorios"><span class="i">📊</span>Relatórios</button>
+    <button class="aba" data-aba="produtos"><span class="i">🍗</span>Produtos</button>
+    <button class="aba" data-aba="config"><span class="i">⚙️</span>Configurações</button>
+    <div class="rod"><a href="index.html" target="_blank">Ver o site ↗</a><br><br>Sistema desenvolvido por<br><a href="https://www.tfsolutions.com.br" target="_blank" rel="noopener"><b>TF Solutions</b></a></div>
+  </nav>
+  <div style="min-width:0"><div class="faixa" id="faixa" hidden></div><main id="main"></main></div>
+</div>
+
+<div class="fundo" id="fundo"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="js/dados.js"></script>
+<script>
+let db = CF.carregar();
+const $ = id => document.getElementById(id);
+const ITENS = CF.ITENS_ESTOQUE;
+const itemPor = id => ITENS.find(i => i.id === id);
+const avisos = () => Object.fromEntries(ITENS.map(i => [i.id, (db.config.avisos || {})[i.id] || { a1: i.aviso1, a2: i.aviso2 }]));
+const minimos = () => Object.fromEntries(Object.entries(avisos()).map(([k, v]) => [k, v.a1]));
+let abaAtual = 'inicio';
+let filtroPed = { dia: null, status: 'ativos' };
+let filtroMov = { item: 'todos' };
+let periodo = 8;
+
+function toast(t) { const el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 2000); }
+function entrar() { $('login').remove(); $('app').hidden = false; ir('inicio'); }
+function ir(aba) {
+  abaAtual = aba;
+  document.querySelectorAll('.aba').forEach(b => b.classList.toggle('on', b.dataset.aba === aba));
+  ({ inicio, pedidos, estoque, relatorios, produtos, config })[aba]();
+  window.scrollTo(0, 0);
+  conferirAvisos();
+}
+document.querySelectorAll('.aba').forEach(b => b.onclick = () => ir(b.dataset.aba));
+
+const hojeISO = () => CF.dataISO(new Date());
+const DIAS = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+const dataDe = iso => { const [a, m, d] = iso.split('-').map(Number); return new Date(a, m - 1, d); };
+const fmtDia = iso => { const d = dataDe(iso); return `${DIAS[d.getDay()]}, ${CF.pad(d.getDate())}/${CF.pad(d.getMonth() + 1)}`; };
+const topoCel = () => `<div class="topo-cel"><img src="img/logo.png" alt=""><b>Frangos &amp; Assados</b><button onclick="ir('config')" aria-label="Configurações">⚙️</button></div>`;
+
+/* ---------- cálculos ---------- */
+function validos() { return db.pedidos.filter(p => p.status !== 'cancelado'); }
+function somaDia(iso) {
+  const peds = validos().filter(p => p.retirada.data === iso);
+  const r = { frango: 0, inteiros: 0, meios: 0, polenta: 0, maionese: 0, fat: 0, pedidos: peds.length };
+  peds.forEach(p => {
+    const c = CF.consumoDe(p.itens, db.produtos);
+    r.frango += c.frango || 0; r.polenta += c.polenta || 0; r.maionese += c.maionese || 0; r.fat += p.total;
+    p.itens.forEach(i => { if (i.pid === 'frango-com-polenta') r.inteiros += i.qtd; if (i.pid === 'meio-frango-com-polenta') r.meios += i.qtd; });
+  });
+  return r;
+}
+/* fim de semana = data do sábado */
+function chaveFds(iso) { const d = dataDe(iso); if (d.getDay() === 0) d.setDate(d.getDate() - 1); return CF.dataISO(d); }
+function fimDeSemanas() {
+  const mapa = {};
+  validos().forEach(p => {
+    const k = chaveFds(p.retirada.data);
+    if (!mapa[k]) mapa[k] = { chave: k, frango: 0, polenta: 0, maionese: 0, fat: 0, pedidos: 0, sab: 0, dom: 0 };
+    const c = CF.consumoDe(p.itens, db.produtos);
+    const f = mapa[k];
+    f.frango += c.frango || 0; f.polenta += c.polenta || 0; f.maionese += c.maionese || 0; f.fat += p.total; f.pedidos++;
+    if (dataDe(p.retirada.data).getDay() === 6) f.sab += c.frango || 0; else f.dom += c.frango || 0;
+  });
+  return Object.values(mapa).sort((a, b) => a.chave.localeCompare(b.chave));
+}
+const rotFds = k => { const s = dataDe(k); const d = new Date(s); d.setDate(d.getDate() + 1); return `${CF.pad(s.getDate())}–${CF.pad(d.getDate())}/${CF.pad(d.getMonth() + 1)}`; };
+function ultimoDiaVenda() {
+  const dias = [...new Set(validos().map(p => p.retirada.data))].filter(d => d <= hojeISO()).sort();
+  return dias[dias.length - 1] || hojeISO();
+}
+function contarNovos() {
+  const n = db.pedidos.filter(p => p.status === 'novo').length;
+  const el = $('contNovos'); el.hidden = !n; el.textContent = n;
+}
+
+/* ---------- INÍCIO ---------- */
+function inicio() {
+  contarNovos();
+  const dia = ultimoDiaVenda();
+  const s = somaDia(dia);
+  const anterior = (() => { const d = dataDe(dia); d.setDate(d.getDate() - 7); return somaDia(CF.dataISO(d)); })();
+  const varia = (a, b) => { if (dia === hojeISO()) return '<span style="color:var(--warn);font-weight:800">● dia em andamento</span>'; if (!b) return ''; const p = Math.round((a - b) / b * 100); return `<span class="${p >= 0 ? 'sobe' : 'desce'}">${p >= 0 ? '▲' : '▼'} ${Math.abs(p)}%</span> vs. semana passada`; };
+  const proximos = db.pedidos.filter(p => p.origem === 'site' && (p.status === 'novo' || p.status === 'pronto') && p.retirada.data >= hojeISO())
+    .sort((a, b) => (a.retirada.data + a.retirada.hora).localeCompare(b.retirada.data + b.retirada.hora)).slice(0, 6);
+
+  $('main').innerHTML = `${topoCel()}
+    <div class="cab"><div><h1>Olá! 👋</h1><p>Resumo de <b>${dia === hojeISO() ? 'hoje' : fmtDia(dia).toLowerCase()}</b> · ${s.pedidos} vendas</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sec" onclick="modalMov()">📦 Lançar estoque</button><button class="btn btn-pri" onclick="modalBalcao()">＋ Venda no balcão</button></div></div>
+
+    <div class="grid g4">
+      <div class="card kpi"><div class="rot">🍗 Frangos vendidos</div><div class="val num">${CF.num(s.frango)}</div><div class="det"><b>${s.inteiros}</b> inteiros · <b>${s.meios}</b> meios</div><div class="det">${varia(s.frango, anterior.frango)}</div></div>
+      <div class="card kpi"><div class="rot">🟨 Polenta</div><div class="val num">${CF.num(s.polenta)}</div><div class="det">porções saíram</div><div class="det">${varia(s.polenta, anterior.polenta)}</div></div>
+      <div class="card kpi"><div class="rot">🥗 Maionese</div><div class="val num">${CF.num(s.maionese)}</div><div class="det">potes de 500 g</div><div class="det">${varia(s.maionese, anterior.maionese)}</div></div>
+      <div class="card kpi"><div class="rot">💰 Faturamento</div><div class="val num">${CF.brl(s.fat)}</div><div class="det">ticket médio <b>${CF.brl(s.pedidos ? s.fat / s.pedidos : 0)}</b></div><div class="det">${varia(s.fat, anterior.fat)}</div></div>
+    </div>
+
+    <h2 style="font-size:20px;margin:24px 0 10px">Estoque agora</h2>
+    <div class="grid g3">${ITENS.map(it => cartaoEstoque(it)).join('')}</div>
+
+    <div class="grid g2" style="margin-top:14px">
+      <div class="card"><h3>Próximas retiradas</h3><div class="sub">Pedidos feitos pelo site</div>
+        ${proximos.length ? `<table><tbody>${proximos.map(p => `<tr><td class="oswald" style="color:var(--brand-d);font-size:17px">${p.retirada.hora}</td><td><b>${p.cliente}</b><br><small style="color:var(--muted)">${fmtDia(p.retirada.data)} · #${p.codigo}</small></td><td>${seloStatus(p.status)}</td></tr>`).join('')}</tbody></table>
+          <button class="btn btn-sec btn-peq" style="margin-top:10px" onclick="ir('pedidos')">Ver todos os pedidos →</button>` : '<div class="vazio">Nenhum pedido aguardando retirada.</div>'}
+      </div>
+      <div class="card graf-wrap"><h3>Frangos por fim de semana</h3><div class="sub">Últimas 8 semanas · passe o dedo nas barras</div><div class="graf" id="gInicio"></div></div>
+    </div>`;
+  const fds = fimDeSemanas().slice(-8);
+  grafBarras($('gInicio'), fds.map(f => ({ rot: rotFds(f.chave).split('/')[0], val: f.frango, dica: `<b>${CF.num(f.frango)} frangos</b><br>${rotFds(f.chave)}` })), { altura: 190 });
+}
+
+function cartaoEstoque(it) {
+  const sd = CF.saldo(db, it.id);
+  const av = avisos()[it.id];
+  const entradaHoje = db.movs.filter(m => m.item === it.id && m.tipo === 'entrada' && m.data.startsWith(ultimoDiaVenda())).reduce((a, m) => a + m.qtd, 0) || av.a1 * 4;
+  const pct = Math.max(0, Math.min(100, sd / entradaHoje * 100));
+  const nivel = nivelAviso(it.id, sd);
+  const selo = nivel === 'zero' ? '<span class="selo s-off">Esgotado</span>' : nivel === 'a2' ? '<span class="selo s-off">⚠ Últimos!</span>' : nivel === 'a1' ? '<span class="selo s-warn">⚠ Acabando</span>' : '<span class="selo s-ok">✓ Ok</span>';
+  return `<div class="card estq-card ${nivel ? 'alerta-' + nivel : ''}">
+    <div class="topo"><div class="ic">${it.icone}</div><div style="flex:1"><b>${it.nome}</b><div class="un">${it.un}</div></div>${selo}</div>
+    <div><span class="saldo num">${CF.num(sd)}</span> <span class="un">${it.un} em estoque</span></div>
+    <div class="barra-est" title="${Math.round(pct)}% do que foi produzido no dia"><i class="${nivel ? 'baixo' : ''}" style="width:${pct}%"></i></div>
+    <button class="aviso-cfg" onclick="modalAvisos('${it.id}')">🔔 Avisar quando restar <b>${av.a1}</b> e <b>${av.a2}</b> <span>Alterar</span></button>
+    <div class="acoes"><button class="btn btn-sec btn-peq" onclick="modalMov('${it.id}','entrada')">＋ Entrada</button><button class="btn btn-sec btn-peq" onclick="modalMov('${it.id}','saida')">− Saída</button></div>
+  </div>`;
+}
+
+/* ---------- avisos de estoque acabando ---------- */
+function nivelAviso(item, sd) {
+  const av = avisos()[item];
+  if (sd <= 0) return 'zero';
+  if (sd <= av.a2) return 'a2';
+  if (sd <= av.a1) return 'a1';
+  return null;
+}
+const PESO = { a1: 1, a2: 2, zero: 3 };
+function conferirAvisos() {
+  db.avisosMostrados = db.avisosMostrados || {};
+  const novos = [];
+  ITENS.forEach(it => {
+    const sd = CF.saldo(db, it.id);
+    const n = nivelAviso(it.id, sd);
+    const antes = db.avisosMostrados[it.id];
+    if (!n) { delete db.avisosMostrados[it.id]; return; }
+    if (!antes || PESO[n] > PESO[antes]) novos.push({ it, sd, n });
+    db.avisosMostrados[it.id] = n;
+  });
+  CF.salvar(db);
+  faixaAvisos();
+  if (!novos.length || $('login')) return;
+  const txt = ({ it, sd, n }) => n === 'zero' ? `<b>${it.nome}</b> acabou! O site já mostra como esgotado.` : `Restam só <b>${CF.num(sd)} ${it.un}</b> de ${it.nome.toLowerCase()}.`;
+  abrirModal(`<div class="aviso-pop"><div class="sino">🔔</div><h2>Estoque acabando</h2>
+    ${novos.map(a => `<div class="aviso-linha ${a.n}"><span style="font-size:24px">${a.it.icone}</span><span>${txt(a)}</span></div>`).join('')}
+    <p class="sub" style="margin-top:10px">Se ainda tiver para vender, lance uma entrada no estoque.</p></div>
+    <div class="rod"><button class="btn btn-sec" onclick="fecharModal()">Ok, entendi</button><button class="btn btn-pri" onclick="fecharModal();modalMov('${novos[0].it.id}','entrada')">＋ Lançar entrada</button></div>`);
+  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+}
+function faixaAvisos() {
+  const el = $('faixa'); if (!el) return;
+  const baixos = ITENS.map(it => ({ it, sd: CF.saldo(db, it.id) })).map(o => ({ ...o, n: nivelAviso(o.it.id, o.sd) })).filter(o => o.n);
+  el.hidden = !baixos.length;
+  el.innerHTML = '⚠ ' + baixos.map(o => o.n === 'zero' ? `${o.it.nome}: <b>esgotado</b>` : `${o.it.nome}: <b>restam ${CF.num(o.sd)}</b>`).join(' · ') + ` <button onclick="ir('estoque')">Ver estoque</button>`;
+}
+function modalAvisos(item) {
+  const it = itemPor(item), av = avisos()[item];
+  abrirModal(`<h2>Avisos de ${it.nome.toLowerCase()}</h2><p class="sub">Quando o estoque chegar nesses números, aparece uma mensagem na tela.</p>
+    <label class="campo">1º aviso — "está acabando" (${it.un})</label><input class="inp num" type="number" min="0" id="av1" value="${av.a1}">
+    <label class="campo">2º aviso — "últimos" (${it.un})</label><input class="inp num" type="number" min="0" id="av2" value="${av.a2}">
+    <p class="sub" style="margin-top:8px;font-size:13px">Exemplo: frango avisa nos últimos 10 e de novo nos últimos 5.</p>
+    <div class="rod"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri" onclick="salvarAvisos('${item}')">Salvar</button></div>`);
+}
+function salvarAvisos(item) {
+  let a1 = Math.max(0, +$('av1').value || 0), a2 = Math.max(0, +$('av2').value || 0);
+  if (a2 > a1) [a1, a2] = [a2, a1];
+  db.config.avisos = { ...(db.config.avisos || {}), [item]: { a1, a2 } };
+  if (db.avisosMostrados) delete db.avisosMostrados[item];
+  CF.salvar(db); fecharModal(); toast('Avisos salvos ✓'); ir(abaAtual);
+}
+
+function seloStatus(s) {
+  return { novo: '<span class="selo s-info">● Novo</span>', pronto: '<span class="selo s-warn">Separado</span>', retirado: '<span class="selo s-ok">✓ Retirado</span>', cancelado: '<span class="selo s-cinza">Cancelado</span>' }[s];
+}
+
+/* ---------- PEDIDOS ---------- */
+function pedidos() {
+  contarNovos();
+  const dias = [...new Set(db.pedidos.map(p => p.retirada.data))].sort().reverse().slice(0, 6).reverse();
+  if (!filtroPed.dia || !dias.includes(filtroPed.dia)) filtroPed.dia = dias.find(d => d >= hojeISO()) || dias[dias.length - 1];
+  let lista = db.pedidos.filter(p => p.retirada.data === filtroPed.dia);
+  const conta = { ativos: lista.filter(p => p.status === 'novo' || p.status === 'pronto').length, site: lista.filter(p => p.origem === 'site').length, todos: lista.length };
+  if (filtroPed.status === 'ativos') lista = lista.filter(p => p.status === 'novo' || p.status === 'pronto');
+  if (filtroPed.status === 'site') lista = lista.filter(p => p.origem === 'site');
+  lista.sort((a, b) => a.retirada.hora.localeCompare(b.retirada.hora) || a.codigo - b.codigo);
+
+  $('main').innerHTML = `${topoCel()}
+    <div class="cab"><div><h1>Pedidos</h1><p>Pedidos do site e vendas no balcão</p></div><button class="btn btn-pri" onclick="modalBalcao()">＋ Venda no balcão</button></div>
+    <div class="filtros">${dias.map(d => `<button class="chip ${d === filtroPed.dia ? 'on' : ''}" onclick="filtroPed.dia='${d}';pedidos()">${d === hojeISO() ? 'Hoje' : fmtDia(d)}</button>`).join('')}</div>
+    <div class="filtros">
+      <button class="chip ${filtroPed.status === 'ativos' ? 'on' : ''}" onclick="filtroPed.status='ativos';pedidos()">Aguardando retirada (${conta.ativos})</button>
+      <button class="chip ${filtroPed.status === 'site' ? 'on' : ''}" onclick="filtroPed.status='site';pedidos()">Só do site (${conta.site})</button>
+      <button class="chip ${filtroPed.status === 'todos' ? 'on' : ''}" onclick="filtroPed.status='todos';pedidos()">Todos (${conta.todos})</button>
+    </div>
+    ${lista.length ? `<div class="pedidos">${lista.map(cartaoPedido).join('')}</div>` : '<div class="card vazio">Nenhum pedido aqui. 🎉</div>'}`;
+}
+
+function cartaoPedido(p) {
+  const fone = (p.fone || '').replace(/\D/g, '');
+  const msg = encodeURIComponent(`Olá, ${p.cliente}! Seu pedido #${p.codigo} do Frangos & Assados já está separado. Pode vir retirar às ${p.retirada.hora}. 🍗`);
+  let bts = '';
+  if (p.status === 'novo') bts += `<button class="btn btn-pri btn-peq" onclick="mudarStatus(${p.codigo},'pronto')">Separado</button>`;
+  if (p.status === 'novo' || p.status === 'pronto') bts += `<button class="btn btn-ok btn-peq" onclick="mudarStatus(${p.codigo},'retirado')">✓ Retirou</button>`;
+  if (fone && p.status !== 'cancelado') bts += `<a class="btn btn-sec btn-peq" style="text-decoration:none" href="https://wa.me/55${fone}?text=${msg}" target="_blank" rel="noopener">WhatsApp</a>`;
+  if (p.status !== 'cancelado' && p.status !== 'retirado') bts += `<button class="btn btn-sec btn-peq" onclick="cancelar(${p.codigo})" title="Cancelar e devolver ao estoque">✕</button>`;
+  return `<div class="ped">
+    <div class="l1"><span class="cod">#${p.codigo}</span>${p.origem === 'site' ? '<span class="selo s-cinza">🌐 Site</span>' : '<span class="selo s-cinza">🏪 Balcão</span>'}${seloStatus(p.status)}</div>
+    <div class="l1"><span class="cli">${p.cliente}</span><span class="hora">${p.retirada.hora}</span></div>
+    <ul>${p.itens.map(i => `<li>${i.qtd}× ${i.nome}</li>`).join('')}</ul>
+    ${p.obs ? `<div class="obs">📝 ${p.obs}</div>` : ''}
+    <div class="l3"><span class="tot">${CF.brl(p.total)}</span><div class="bts">${bts}</div></div>
+  </div>`;
+}
+function mudarStatus(cod, st) { const p = db.pedidos.find(x => x.codigo === cod); p.status = st; CF.salvar(db); toast(st === 'retirado' ? 'Pedido entregue ✓' : 'Pedido marcado como separado'); pedidos(); }
+function cancelar(cod) {
+  const p = db.pedidos.find(x => x.codigo === cod);
+  abrirModal(`<h2>Cancelar pedido #${cod}?</h2><p class="sub">Os itens voltam para o estoque automaticamente.</p>
+    <div class="rod"><button class="btn btn-sec" onclick="fecharModal()">Voltar</button><button class="btn btn-pri" style="background:var(--off)" onclick="confCancelar(${cod})">Cancelar pedido</button></div>`);
+}
+function confCancelar(cod) { CF.cancelarPedido(db, db.pedidos.find(x => x.codigo === cod)); fecharModal(); toast('Pedido cancelado, estoque devolvido'); ir(abaAtual); }
+
+/* venda no balcão */
+let balcao = {};
+function modalBalcao() {
+  balcao = {};
+  desenharBalcao();
+}
+function desenharBalcao() {
+  const tot = Object.entries(balcao).reduce((a, [id, q]) => a + db.produtos.find(p => p.id === id).preco * q, 0);
+  abrirModal(`<h2>Venda no balcão</h2><p class="sub">Registre o que saiu. O estoque baixa sozinho.</p>
+    <div style="margin-top:10px">${db.produtos.map(p => {
+      const q = balcao[p.id] || 0;
+      const livre = CF.disponivel(db, p, Object.entries(balcao).map(([pid, qtd]) => ({ pid, qtd })));
+      return `<div class="balcao-item"><img src="${p.img || 'img/logo.png'}" alt=""><div class="t"><b>${p.nome}</b><br><small>${CF.brl(p.preco)} · ${livre > 0 ? 'dá para mais ' + livre : 'sem estoque'}</small></div>
+        <div class="q"><button onclick="bal('${p.id}',-1)">−</button><span>${q}</span><button onclick="bal('${p.id}',1)" ${livre <= 0 ? 'disabled style="opacity:.3"' : ''}>+</button></div></div>`;
+    }).join('')}</div>
+    <div style="display:flex;justify-content:space-between;margin-top:14px" class="oswald"><span style="font-size:18px">Total</span><span style="font-size:24px">${CF.brl(tot)}</span></div>
+    <div class="rod"><button class="btn btn-sec" onclick="fecharModal()">Fechar</button><button class="btn btn-pri" onclick="salvarBalcao()" ${tot ? '' : 'disabled style="opacity:.5"'}>Registrar venda</button></div>`);
+}
+function bal(id, d) { balcao[id] = Math.max(0, (balcao[id] || 0) + d); if (!balcao[id]) delete balcao[id]; desenharBalcao(); }
+function salvarBalcao() {
+  const a = new Date();
+  const hora = CF.pad(a.getHours()) + ':' + CF.pad(a.getMinutes());
+  CF.registrarPedido(db, {
+    origem: 'balcao', cliente: 'Balcão', fone: '', obs: '', status: 'retirado',
+    itens: Object.entries(balcao).map(([pid, qtd]) => { const p = db.produtos.find(x => x.id === pid); return { pid, nome: p.nome, preco: p.preco, qtd }; }),
+    retirada: { data: hojeISO(), hora }, criado: hojeISO() + 'T' + hora
+  });
+  fecharModal(); toast('Venda registrada ✓'); ir(abaAtual);
+}
+
+/* ---------- ESTOQUE ---------- */
+function estoque() {
+  let movs = db.movs.slice().sort((a, b) => b.data.localeCompare(a.data));
+  if (filtroMov.item !== 'todos') movs = movs.filter(m => m.item === filtroMov.item);
+  // agrupa saídas de venda do mesmo dia para a lista ficar curta
+  const linhas = [];
+  const agrup = {};
+  movs.forEach(m => {
+    if (m.motivo === 'Venda no balcão' || m.motivo === 'Pedido do site') {
+      const k = m.data.slice(0, 10) + m.item + m.motivo;
+      if (!agrup[k]) { agrup[k] = { ...m, qtd: 0, n: 0, data: m.data.slice(0, 10) + 'T—' }; linhas.push(agrup[k]); }
+      agrup[k].qtd += m.qtd; agrup[k].n++;
+    } else linhas.push(m);
+  });
+
+  $('main').innerHTML = `${topoCel()}
+    <div class="cab"><div><h1>Estoque</h1><p>Entradas (produção) e saídas (vendas, perdas). As vendas baixam sozinhas.</p></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-sec" onclick="modalMov(null,'saida')">− Saída</button><button class="btn btn-pri" onclick="modalMov(null,'entrada')">＋ Entrada</button></div></div>
+    <div class="card" style="margin-bottom:14px;background:var(--brand-l);border-color:#F7CDB4;box-shadow:none;font-size:14px;color:var(--brand-d)">💡 <b>Dica:</b> na sexta, lance como entrada quantos frangos vão assar no fim de semana. O site só aceita encomendas até esse número e mostra "Restam X" quando estiver acabando.</div>
+    <div class="grid g3">${ITENS.map(it => cartaoEstoque(it)).join('')}</div>
+    <div class="card" style="margin-top:16px">
+      <div class="cab" style="margin-bottom:8px"><div><h3>Movimentações</h3><div class="sub" style="margin:0">Vendas do dia aparecem somadas numa linha só</div></div>
+        <button class="btn btn-sec btn-peq" onclick="exportarMovs()">⬇ Baixar planilha (.csv)</button></div>
+      <div class="filtros">${[['todos', 'Todos']].concat(ITENS.map(i => [i.id, i.icone + ' ' + i.nome])).map(([id, n]) => `<button class="chip ${filtroMov.item === id ? 'on' : ''}" onclick="filtroMov.item='${id}';estoque()">${n}</button>`).join('')}</div>
+      <div class="tab-wrap"><table>
+        <thead><tr><th>Data</th><th>Item</th><th>Motivo</th><th class="r">Qtd.</th></tr></thead>
+        <tbody>${linhas.slice(0, 60).map(m => {
+          const d = m.data.slice(0, 10), h = m.data.slice(11);
+          return `<tr><td class="num">${fmtDia(d)}${h && h !== '—' ? ` <small style="color:var(--muted)">${h}</small>` : ''}</td><td>${itemPor(m.item).icone} ${itemPor(m.item).nome}</td>
+            <td>${m.motivo}${m.n ? ` <small style="color:var(--muted)">(${m.n} vendas)</small>` : m.ref ? ` <small style="color:var(--muted)">#${m.ref}</small>` : ''}</td>
+            <td class="r num ${m.tipo === 'entrada' ? 'ent' : 'sai'}">${m.tipo === 'entrada' ? '+' : '−'}${CF.num(m.qtd)}</td></tr>`; }).join('')}</tbody>
+      </table></div>
+    </div>`;
+}
+
+let mov = {};
+const MOTIVOS = { entrada: ['Produção do dia', 'Produção prevista para o fim de semana', 'Compra de frangos', 'Ajuste de contagem'], saida: ['Perda / estragou', 'Consumo da família/equipe', 'Doação', 'Sobra do dia (consumo/perda)', 'Ajuste de contagem'] };
+function modalMov(item, tipo) { mov = { item: item || 'frango', tipo: tipo || 'entrada', qtd: '', motivo: null }; desenharMov(); }
+function desenharMov() {
+  if (!MOTIVOS[mov.tipo].includes(mov.motivo)) mov.motivo = MOTIVOS[mov.tipo][0];
+  const it = itemPor(mov.item);
+  abrirModal(`<h2>Lançar no estoque</h2><p class="sub">Saldo atual de ${it.nome.toLowerCase()}: <b>${CF.num(CF.saldo(db, mov.item))} ${it.un}</b></p>
+    <label class="campo">Tipo</label>
+    <div class="seg seg2"><button class="e ${mov.tipo === 'entrada' ? 'on' : ''}" onclick="mov.tipo='entrada';desenharMov()">＋ Entrada</button><button class="s ${mov.tipo === 'saida' ? 'on' : ''}" onclick="mov.tipo='saida';desenharMov()">− Saída</button></div>
+    <label class="campo">Item</label>
+    <div class="seg">${ITENS.map(i => `<button class="${i.id === mov.item ? 'on' : ''}" onclick="mov.item='${i.id}';desenharMov()">${i.icone}<br>${i.nome}</button>`).join('')}</div>
+    <label class="campo">Quantidade (${it.un})</label>
+    <div class="qtd-grande"><button onclick="ajQ(-1)">−</button><input class="inp num" id="mQtd" inputmode="decimal" value="${mov.qtd}" placeholder="0" oninput="mov.qtd=this.value"><button onclick="ajQ(1)">+</button></div>
+    <div class="atalhos">${[10, 20, 50].map(n => `<button class="chip" onclick="ajQ(${n})">+${n}</button>`).join('')}</div>
+    <label class="campo">Motivo</label>
+    <select class="inp" onchange="mov.motivo=this.value">${MOTIVOS[mov.tipo].map(m => `<option ${m === mov.motivo ? 'selected' : ''}>${m}</option>`).join('')}</select>
+    <div class="rod"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn ${mov.tipo === 'entrada' ? 'btn-ok' : 'btn-pri'}" onclick="salvarMov()">Salvar ${mov.tipo}</button></div>`);
+}
+function ajQ(n) { const v = parseFloat(String(mov.qtd).replace(',', '.')) || 0; mov.qtd = Math.max(0, v + n); $('mQtd').value = mov.qtd; }
+function salvarMov() {
+  const q = parseFloat(String(mov.qtd).replace(',', '.'));
+  if (!q || q <= 0) { toast('Coloque a quantidade'); return; }
+  if (mov.tipo === 'saida' && q > CF.saldo(db, mov.item)) { toast('Saída maior que o estoque'); return; }
+  const a = new Date();
+  db.movs.push({ id: CF.uid(), data: hojeISO() + 'T' + CF.pad(a.getHours()) + ':' + CF.pad(a.getMinutes()), item: mov.item, tipo: mov.tipo, qtd: q, motivo: mov.motivo });
+  CF.salvar(db); fecharModal(); toast(`${mov.tipo === 'entrada' ? 'Entrada' : 'Saída'} registrada ✓`); ir(abaAtual);
+}
+function exportarMovs() {
+  const linhas = [['Data', 'Hora', 'Item', 'Tipo', 'Quantidade', 'Motivo', 'Pedido']];
+  db.movs.slice().sort((a, b) => a.data.localeCompare(b.data)).forEach(m => linhas.push([m.data.slice(0, 10).split('-').reverse().join('/'), m.data.slice(11), itemPor(m.item).nome, m.tipo === 'entrada' ? 'Entrada' : 'Saída', String(m.qtd).replace('.', ','), m.motivo, m.ref || '']));
+  baixar('estoque-frangos-assados.csv', linhas);
+}
+function baixar(nome, linhas) {
+  const csv = '﻿' + linhas.map(l => l.map(c => `"${String(c).replace(/"/g, '""')}"`).join(';')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = nome; a.click();
+}
+
+/* ---------- RELATÓRIOS ---------- */
+function relatorios() {
+  const fds = fimDeSemanas().slice(-periodo);
+  const tot = fds.reduce((a, f) => ({ frango: a.frango + f.frango, polenta: a.polenta + f.polenta, maionese: a.maionese + f.maionese, fat: a.fat + f.fat, pedidos: a.pedidos + f.pedidos }), { frango: 0, polenta: 0, maionese: 0, fat: 0, pedidos: 0 });
+  const n = fds.length || 1;
+  const chaves = new Set(fds.map(f => f.chave));
+  const peds = validos().filter(p => chaves.has(chaveFds(p.retirada.data)));
+
+  // mix de produtos
+  const mix = db.produtos.map(pr => ({ nome: pr.nome, q: peds.reduce((a, p) => a + p.itens.filter(i => i.pid === pr.id).reduce((x, i) => x + i.qtd, 0), 0), v: peds.reduce((a, p) => a + p.itens.filter(i => i.pid === pr.id).reduce((x, i) => x + i.qtd * i.preco, 0), 0) })).sort((a, b) => b.v - a.v);
+  const maxMix = Math.max(...mix.map(m => m.v), 1);
+  // horários
+  const horas = {}; peds.forEach(p => { const h = p.retirada.hora.slice(0, 2) + 'h'; horas[h] = (horas[h] || 0) + 1; });
+  const hsOrd = Object.keys(horas).sort();
+  const pico = hsOrd.reduce((a, h) => horas[h] > (horas[a] || 0) ? h : a, hsOrd[0]);
+  // sábado x domingo
+  const sab = fds.reduce((a, f) => a + f.sab, 0) / n, dom = fds.reduce((a, f) => a + f.dom, 0) / n;
+  const site = peds.filter(p => p.origem === 'site').length;
+
+  $('main').innerHTML = `${topoCel()}
+    <div class="cab"><div><h1>Relatórios</h1><p>Somente sábados e domingos · ${fds.length} fins de semana</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${[4, 8].map(p => `<button class="chip ${periodo === p ? 'on' : ''}" onclick="periodo=${p};relatorios()">Últimos ${p}</button>`).join('')}<button class="btn btn-sec btn-peq" onclick="exportarRel()">⬇ Planilha</button></div></div>
+
+    <div class="grid g4">
+      <div class="card kpi"><div class="rot">🍗 Frangos no período</div><div class="val num">${CF.num(tot.frango)}</div><div class="det">média de <b>${CF.num(tot.frango / n)}</b> por fim de semana</div></div>
+      <div class="card kpi"><div class="rot">🟨 Polenta</div><div class="val num">${CF.num(tot.polenta)}</div><div class="det">média de <b>${CF.num(tot.polenta / n)}</b> porções</div></div>
+      <div class="card kpi"><div class="rot">🥗 Maionese</div><div class="val num">${CF.num(tot.maionese)}</div><div class="det">média de <b>${CF.num(tot.maionese / n)}</b> potes</div></div>
+      <div class="card kpi"><div class="rot">💰 Faturamento</div><div class="val num">${CF.brl(tot.fat)}</div><div class="det">média de <b>${CF.brl(tot.fat / n)}</b></div></div>
+    </div>
+
+    <div class="grid g2" style="margin-top:14px">
+      ${blocoGraf('gFrango', 'Frangos vendidos por fim de semana', 'Inteiros + meios (½ frango conta 0,5)', fds.map(f => [rotFds(f.chave), CF.num(f.frango)]), 'Fim de semana', 'Frangos')}
+      ${blocoGraf('gFat', 'Faturamento por fim de semana', 'Site + balcão', fds.map(f => [rotFds(f.chave), CF.brl(f.fat)]), 'Fim de semana', 'Faturamento')}
+      ${blocoGraf('gPol', 'Polenta por fim de semana', 'Porções (inclui as que vão com o frango)', fds.map(f => [rotFds(f.chave), CF.num(f.polenta)]), 'Fim de semana', 'Porções')}
+      ${blocoGraf('gMai', 'Maionese por fim de semana', 'Potes de 500 g', fds.map(f => [rotFds(f.chave), CF.num(f.maionese)]), 'Fim de semana', 'Potes')}
+    </div>
+
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card"><h3>O que mais vende</h3><div class="sub">Por faturamento no período</div>
+        ${mix.map(m => `<div class="hbar"><span>${m.nome} <small style="color:var(--muted)">· ${m.q} vendidos</small></span><b class="num" style="font-size:13.5px">${CF.brl(m.v).replace(',00', '')}</b><div class="trilho"><i style="width:${m.v / maxMix * 100}%"></i></div></div>`).join('')}
+      </div>
+      <div class="card"><h3>Sábado × domingo</h3><div class="sub">Média de frangos por dia</div>
+        <div class="graf" id="gSD"></div>
+        <p style="font-size:13.5px;color:var(--ink2);margin-top:8px">${dom > sab ? `Domingo vende em média <b>${Math.round((dom - sab) / sab * 100)}% a mais</b>. Vale assar mais no domingo.` : `Sábado vende em média <b>${Math.round((sab - dom) / dom * 100)}% a mais</b>.`}</p>
+      </div>
+      <div class="card"><h3>Horário de mais movimento</h3><div class="sub">Vendas por hora de retirada</div>
+        <div class="graf" id="gHora"></div>
+        <p style="font-size:13.5px;color:var(--ink2);margin-top:8px">Pico às <b>${pico}</b>. ${Math.round(site / (peds.length || 1) * 100)}% das vendas vieram do site.</p>
+      </div>
+    </div>`;
+
+  grafBarras($('gFrango'), fds.map(f => ({ rot: rotFds(f.chave).split('/')[0], val: f.frango, dica: `<b>${CF.num(f.frango)} frangos</b><br>Sáb ${CF.num(f.sab)} · Dom ${CF.num(f.dom)}<br>${rotFds(f.chave)}` })));
+  grafBarras($('gFat'), fds.map(f => ({ rot: rotFds(f.chave).split('/')[0], val: f.fat, dica: `<b>${CF.brl(f.fat)}</b><br>${f.pedidos} vendas · ${rotFds(f.chave)}` })), { fmt: v => 'R$ ' + (v >= 1000 ? (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : Math.round(v)) });
+  grafBarras($('gPol'), fds.map(f => ({ rot: rotFds(f.chave).split('/')[0], val: f.polenta, dica: `<b>${CF.num(f.polenta)} porções</b><br>${rotFds(f.chave)}` })));
+  grafBarras($('gMai'), fds.map(f => ({ rot: rotFds(f.chave).split('/')[0], val: f.maionese, dica: `<b>${CF.num(f.maionese)} potes</b><br>${rotFds(f.chave)}` })));
+  grafBarras($('gSD'), [{ rot: 'Sábado', val: sab, dica: `<b>${CF.num(sab)} frangos</b> em média` }, { rot: 'Domingo', val: dom, dica: `<b>${CF.num(dom)} frangos</b> em média` }], { altura: 170, destacarUltima: false });
+  grafBarras($('gHora'), hsOrd.map(h => ({ rot: h, val: horas[h], dica: `<b>${horas[h]} vendas</b><br>das ${h} às ${parseInt(h) + 1}h` })), { altura: 170, destacarUltima: false });
+}
+
+function blocoGraf(id, tit, sub, linhas, c1, c2) {
+  return `<div class="card graf-wrap" id="w${id}"><div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><div><h3>${tit}</h3><div class="sub">${sub}</div></div><button class="alternar" onclick="this.closest('.graf-wrap').classList.toggle('tabela');this.textContent=this.textContent==='Ver tabela'?'Ver gráfico':'Ver tabela'">Ver tabela</button></div>
+    <div class="graf" id="${id}"></div>
+    <div class="tab-graf"><table><thead><tr><th>${c1}</th><th class="r">${c2}</th></tr></thead><tbody>${linhas.map(l => `<tr><td>${l[0]}</td><td class="r num">${l[1]}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+
+function exportarRel() {
+  const linhas = [['Fim de semana', 'Frangos', 'Frangos sábado', 'Frangos domingo', 'Polenta (porções)', 'Maionese (potes)', 'Vendas', 'Faturamento']];
+  fimDeSemanas().forEach(f => linhas.push([rotFds(f.chave), String(f.frango).replace('.', ','), String(f.sab).replace('.', ','), String(f.dom).replace('.', ','), f.polenta, f.maionese, f.pedidos, f.fat.toFixed(2).replace('.', ',')]));
+  baixar('vendas-por-fim-de-semana.csv', linhas);
+}
+
+/* gráfico de barras simples (SVG, sem biblioteca) */
+function grafBarras(el, dados, op = {}) {
+  const W = 520, H = op.altura || 220, mE = 52, mB = 26, mT = 22;
+  const fmt = op.fmt || (v => CF.num(v));
+  const max = Math.max(...dados.map(d => d.val), 1);
+  const passo = Math.pow(10, Math.floor(Math.log10(max))) * (max / Math.pow(10, Math.floor(Math.log10(max))) > 5 ? 2 : 1);
+  const topo = Math.ceil(max / passo) * passo;
+  const y = v => mT + (H - mT - mB) * (1 - v / topo);
+  const larg = (W - mE) / dados.length;
+  const bw = Math.min(46, larg * 0.62);
+  const destacar = op.destacarUltima !== false;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img">`;
+  for (let v = 0; v <= topo + 1e-9; v += passo) s += `<line class="grade-l" x1="${mE}" x2="${W}" y1="${y(v)}" y2="${y(v)}"/><text class="eixo" x="${mE - 6}" y="${y(v) + 4}" text-anchor="end">${fmt(v)}</text>`;
+  dados.forEach((d, i) => {
+    const x = mE + larg * i + (larg - bw) / 2, yv = y(d.val), h = Math.max(0, H - mB - yv);
+    const r = Math.min(4, h);
+    const ultima = i === dados.length - 1;
+    s += `<path class="barra ${destacar && !ultima ? 'fraca' : ''}" d="M${x},${H - mB} V${yv + r} Q${x},${yv} ${x + r},${yv} H${x + bw - r} Q${x + bw},${yv} ${x + bw},${yv + r} V${H - mB} Z"/>`;
+    if (ultima || !destacar) s += `<text class="rotv" x="${x + bw / 2}" y="${yv - 6}" text-anchor="middle">${fmt(d.val)}</text>`;
+    s += `<text class="eixo" x="${x + bw / 2}" y="${H - 8}" text-anchor="middle">${d.rot}</text>`;
+    s += `<rect class="alvo" x="${mE + larg * i}" y="${mT}" width="${larg}" height="${H - mT}" data-i="${i}"/>`;
+  });
+  s += '</svg><div class="dica"></div>';
+  el.innerHTML = s;
+  const dica = el.querySelector('.dica');
+  el.querySelectorAll('.alvo').forEach(a => {
+    const mostrar = () => {
+      const i = +a.dataset.i, d = dados[i];
+      const sv = el.querySelector('svg').getBoundingClientRect(), k = sv.width / W;
+      dica.innerHTML = d.dica; dica.style.left = (mE + larg * i + larg / 2) * k + 'px'; dica.style.top = y(d.val) * k + 'px'; dica.style.opacity = 1;
+      el.querySelectorAll('.barra').forEach((b, j) => b.style.opacity = j === i ? 1 : .55);
+    };
+    a.addEventListener('mouseenter', mostrar); a.addEventListener('touchstart', mostrar, { passive: true });
+    a.addEventListener('mouseleave', () => { dica.style.opacity = 0; el.querySelectorAll('.barra').forEach(b => b.style.opacity = 1); });
+  });
+}
+
+/* ---------- PRODUTOS ---------- */
+function produtos() {
+  $('main').innerHTML = `${topoCel()}
+    <div class="cab"><div><h1>Produtos</h1><p>Altere preço, descrição e o que aparece no site</p></div></div>
+    <div class="grid" style="gap:12px">${db.produtos.map((p, i) => `
+      <div class="card prod-ed"><div class="foto-ed">
+        <img src="${p.img || 'img/logo.png'}" alt="" class="${p.img ? '' : 'sem-foto'}">
+        <label class="btn btn-sec btn-peq">📷 ${p.img ? 'Trocar foto' : 'Colocar foto'}<input type="file" accept="image/*" hidden onchange="trocarFoto(${i}, this)"></label>
+        ${p.img ? `<button class="btn btn-sec btn-peq" style="color:var(--off)" onclick="removerFoto(${i})">🗑 Remover</button>` : '<small style="color:var(--muted);font-size:11.5px">Sem foto: o site mostra o logo</small>'}
+      </div>
+        <div>
+          <div class="linha"><div><label class="campo" style="margin-top:0">Nome</label><input class="inp" value="${p.nome}" onchange="db.produtos[${i}].nome=this.value"></div>
+            <div style="max-width:150px"><label class="campo" style="margin-top:0">Preço (R$)</label><input class="inp num" inputmode="decimal" value="${p.preco.toFixed(2).replace('.', ',')}" onchange="db.produtos[${i}].preco=parseFloat(this.value.replace(',','.'))||0"></div></div>
+          <label class="campo">Descrição</label><textarea class="inp" rows="2" onchange="db.produtos[${i}].desc=this.value">${p.desc}</textarea>
+          <div class="linha" style="margin-top:10px;align-items:center">
+            <div><label class="campo" style="margin-top:0">Selo (opcional)</label><input class="inp" value="${p.destaque || ''}" placeholder="Ex.: Mais pedido" onchange="db.produtos[${i}].destaque=this.value"></div>
+            <div><label class="tog"><input type="checkbox" ${p.ativo ? 'checked' : ''} onchange="db.produtos[${i}].ativo=this.checked"> Aparece no site</label>
+              <div style="font-size:12.5px;color:var(--muted);margin-top:4px">Baixa do estoque: ${Object.entries(p.consumo).map(([k, v]) => `${CF.num(v)} ${itemPor(k).nome.toLowerCase()}`).join(' + ')}</div></div>
+          </div>
+        </div>
+      </div>`).join('')}</div>
+    <div style="margin-top:14px;display:flex;justify-content:flex-end"><button class="btn btn-pri" onclick="CF.salvar(db);toast('Produtos salvos ✓')">Salvar alterações</button></div>`;
+}
+
+function trocarFoto(i, input) {
+  const arq = input.files && input.files[0];
+  if (!arq) return;
+  const leitor = new FileReader();
+  leitor.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      // reduz a foto para ficar leve no site (máx. 900 px)
+      const max = 900, k = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      db.produtos[i].img = cv.toDataURL('image/jpeg', 0.84);
+      CF.salvar(db); toast('Foto trocada ✓ Já aparece no site'); produtos();
+    };
+    img.onerror = () => toast('Não consegui abrir essa imagem');
+    img.src = leitor.result;
+  };
+  leitor.readAsDataURL(arq);
+}
+function removerFoto(i) {
+  abrirModal(`<h2>Remover a foto?</h2><p class="sub">Até colocar outra, o site mostra o logo da loja no lugar.</p>
+    <div class="rod"><button class="btn btn-sec" onclick="fecharModal()">Voltar</button><button class="btn btn-pri" style="background:var(--off)" onclick="db.produtos[${i}].img='';CF.salvar(db);fecharModal();toast('Foto removida');produtos()">Remover</button></div>`);
+}
+
+/* ---------- CONFIGURAÇÕES ---------- */
+function config() {
+  const c = db.config;
+  $('main').innerHTML = `${topoCel()}
+    <div class="cab"><div><h1>Configurações</h1><p>Dados que aparecem no site</p></div></div>
+    <div class="grid g2">
+      <div class="card"><h3>Loja</h3>
+        <label class="campo">WhatsApp que recebe os pedidos (com 55 e DDD)</label><input class="inp" id="cZap" value="${c.whatsapp}">
+        <label class="campo">Telefone</label><input class="inp" id="cTel" value="${c.telefone}">
+        <label class="campo">Endereço para retirada</label><input class="inp" id="cEnd" value="${c.endereco}">
+      </div>
+      <div class="card"><h3>Horários</h3>
+        <div class="sub">Só sábado e domingo</div>
+        <div class="linha"><div><label class="campo">Loja abre às</label><input class="inp" type="time" id="cIni" value="${c.horaInicio}"></div><div><label class="campo">Fecha às</label><input class="inp" type="time" id="cFim" value="${c.horaFim}"></div></div>
+        <div class="linha"><div><label class="campo">Retirada dos pedidos a partir de</label><input class="inp" type="time" id="cRIni" value="${c.retiradaInicio || '11:00'}"></div><div><label class="campo">Até</label><input class="inp" type="time" id="cRFim" value="${c.retiradaFim || c.horaFim}"></div></div>
+        <p style="font-size:12.5px;color:var(--muted);margin-top:8px">No site, o cliente escolhe o horário de retirada de 30 em 30 minutos dentro desse período. Os avisos de estoque acabando ficam na aba Estoque.</p>
+        <div style="margin-top:18px;padding-top:14px;border-top:1px dashed var(--line)"><h3>Demonstração</h3><div class="sub">Volta os dados de exemplo ao início</div><button class="btn btn-sec" onclick="db=CF.restaurar();toast('Dados de exemplo restaurados');ir('inicio')">↺ Restaurar dados de exemplo</button></div>
+      </div>
+    </div>
+    <div style="margin-top:14px;display:flex;justify-content:flex-end"><button class="btn btn-pri" onclick="salvarConfig()">Salvar configurações</button></div>`;
+}
+function salvarConfig() {
+  const c = db.config;
+  c.whatsapp = $('cZap').value.replace(/\D/g, ''); c.telefone = $('cTel').value; c.endereco = $('cEnd').value;
+  c.horaInicio = $('cIni').value; c.horaFim = $('cFim').value; c.retiradaInicio = $('cRIni').value; c.retiradaFim = $('cRFim').value;
+  CF.salvar(db); toast('Configurações salvas ✓');
+}
+
+/* ---------- modal ---------- */
+function abrirModal(html) { $('modal').innerHTML = html; $('fundo').classList.add('on'); }
+function fecharModal() { $('fundo').classList.remove('on'); }
+$('fundo').addEventListener('click', e => { if (e.target.id === 'fundo') fecharModal(); });
+
+/* atualiza se chegar pedido novo pelo site (outra aba) */
+window.addEventListener('storage', () => { db = CF.carregar(); if ($('app').hidden === false) ir(abaAtual); });
+</script>
+</body>
+</html>

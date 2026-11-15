@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Frangos &amp; Assados — Encomende seu frango assado</title>
+<meta name="description" content="19 anos de tradição. Encomende seu frango assado com polenta e retire sem fila. Retirada sábados e domingos, das 11h às 13h.">
+<meta name="theme-color" content="#E2571C">
+<!-- Prévia do link no WhatsApp: troque o endereço abaixo pelo endereço final do site -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Frangos &amp; Assados — Peça o seu para retirada">
+<meta property="og:description" content="O melhor frango assado da região! Encomende pelo site e retire sem fila. Sáb e dom, das 11h às 13h.">
+<meta property="og:image" content="https://fabricior13.github.io/frangos-assados/img/preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://fabricior13.github.io/frangos-assados/">
+<link rel="icon" href="img/logo-192.png">
+<link rel="apple-touch-icon" href="img/logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFF8EF; --card:#FFFFFF; --ink:#2B1A12; --ink2:#6B5547; --muted:#9A877A;
+    --line:#F0E2D2; --brand:#E2571C; --brand-d:#C2440F; --brand-l:#FDE9DC;
+    --gold:#F4B23A; --ok:#2E8B57; --ok-l:#E3F4EA; --warn:#B7791F; --warn-l:#FDF3DD; --off:#B9442E;
+    --radius:18px; --shadow:0 6px 24px rgba(91,49,20,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Nunito Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:96px}
+  h1,h2,h3,.titulo{font-family:'Oswald',sans-serif;letter-spacing:.3px}
+  button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+  input,select,textarea{font:inherit;color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+
+  /* topo */
+  header.topo{position:sticky;top:0;z-index:30;background:rgba(255,248,239,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .topo .wrap{display:flex;align-items:center;gap:12px;height:66px}
+  .topo img{width:46px;height:46px;border-radius:50%}
+  .topo .marca{line-height:1.1}
+  .topo .marca b{font-family:'Oswald';font-size:18px;display:block}
+  .topo .marca span{font-size:12.5px;color:var(--ink2)}
+  .topo .status{margin-left:auto;font-size:12.5px;font-weight:800;padding:7px 12px;border-radius:99px;white-space:nowrap}
+  .st-aberto{background:var(--ok-l);color:var(--ok)}
+  .st-fechado{background:var(--warn-l);color:var(--warn)}
+
+  /* hero */
+  .hero{padding:34px 0 18px}
+  .hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:center}
+  .selo{display:inline-flex;align-items:center;gap:8px;background:var(--brand-l);color:var(--brand-d);font-weight:800;font-size:13px;padding:7px 13px;border-radius:99px}
+  .hero h1{font-size:clamp(34px,6vw,54px);line-height:1.02;margin:14px 0 12px;text-transform:uppercase}
+  .hero h1 em{font-style:normal;color:var(--brand)}
+  .hero p.sub{font-size:17px;color:var(--ink2);max-width:520px}
+  .hero .acoes{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+  .btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:800;border-radius:14px;padding:14px 20px;font-size:16px;transition:transform .12s, background .2s}
+  .btn:active{transform:scale(.97)}
+  .btn-pri{background:var(--brand);color:#fff;box-shadow:0 8px 20px rgba(226,87,28,.28)}
+  .btn-pri:hover{background:var(--brand-d)}
+  .btn-sec{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .hero .foto{position:relative;aspect-ratio:1/1;border-radius:28px;overflow:hidden;box-shadow:var(--shadow);background:#fff}
+  .hero .foto img{width:100%;height:100%;object-fit:cover}
+  .hero .foto .tag{position:absolute;left:14px;bottom:14px;background:#fff;border-radius:14px;padding:10px 14px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center}
+  .hero .foto .tag img{width:38px;height:38px;border-radius:50%}
+  .hero .foto .tag b{font-family:'Oswald';font-size:16px;display:block;line-height:1.1}
+  .hero .foto .tag span{font-size:12px;color:var(--ink2)}
+
+  /* como funciona */
+  .passos{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0 8px}
+  .passo{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;gap:12px;align-items:flex-start}
+  .passo .n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--brand);color:#fff;font-family:'Oswald';font-size:17px;display:grid;place-items:center}
+  .passo b{display:block;font-size:15px}
+  .passo span{font-size:13.5px;color:var(--ink2)}
+
+  /* cardápio */
+  section.cardapio{padding:26px 0 10px}
+  .sec-tit{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .sec-tit h2{font-size:28px;text-transform:uppercase}
+  .sec-tit p{color:var(--ink2);font-size:14px}
+  .grade{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .prod{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;overflow:hidden;transition:box-shadow .3s, border-color .3s;scroll-margin-top:84px}
+  .prod.destaque-link{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-l),var(--shadow)}
+  .prod .img{flex:none;width:150px;position:relative;background:#f6efe7}
+  .prod .img img{width:100%;height:100%;object-fit:cover;display:block}
+  .prod .img img.sem-foto{object-fit:contain;padding:18px;background:#fff}
+  .prod .badge{position:absolute;top:10px;left:10px;background:var(--gold);color:#3b2504;font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:99px}
+  .prod .info{padding:16px;display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+  .prod h3{font-size:20px;line-height:1.15}
+  .prod .desc{font-size:13.5px;color:var(--ink2);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .prod .base{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:6px}
+  .prod .preco{font-family:'Oswald';font-size:24px;color:var(--brand-d)}
+  .prod .estq{font-size:12px;font-weight:700}
+  .estq.pouco{color:var(--warn)} .estq.zero{color:var(--off)}
+  .qtd{display:flex;align-items:center;background:var(--brand-l);border-radius:12px}
+  .qtd button{width:40px;height:40px;font-size:22px;font-weight:800;color:var(--brand-d)}
+  .qtd span{min-width:24px;text-align:center;font-weight:800}
+  .add{background:var(--brand);color:#fff;font-weight:800;border-radius:12px;padding:10px 16px}
+  .add:disabled{background:#d9cbbf;cursor:not-allowed}
+  .prod .acoes-mini{display:flex;gap:6px;align-items:center}
+  .link-prod{font-size:12px;color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+
+  /* informações */
+  .infos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:30px 0}
+  .info-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px}
+  .info-card .ic{font-size:24px}
+  .info-card b{display:block;font-family:'Oswald';font-size:18px;margin:6px 0 4px}
+  .info-card p{font-size:14px;color:var(--ink2)}
+  .info-card a{color:var(--brand-d);font-weight:800;text-decoration:none}
+
+  footer{border-top:1px solid var(--line);padding:22px 0 30px;text-align:center;font-size:13px;color:var(--muted)}
+  footer a{color:var(--ink2);font-weight:700;text-decoration:none}
+  footer .tf{display:inline-block;margin-top:10px;font-size:12px}
+
+  /* barra do carrinho */
+  .barra{position:fixed;left:0;right:0;bottom:0;z-index:40;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(255,248,239,.95) 30%);transform:translateY(120%);transition:transform .3s,visibility .3s;visibility:hidden}
+  .barra.on{transform:none;visibility:visible}
+  .barra button{width:100%;max-width:560px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:#fff;border-radius:16px;padding:16px 20px;font-weight:800;font-size:16px;box-shadow:0 10px 30px rgba(43,26,18,.3)}
+  .barra .qt{background:var(--brand);border-radius:99px;padding:2px 10px;margin-right:8px}
+
+  /* gaveta */
+  .fundo{position:fixed;inset:0;background:rgba(43,26,18,.45);z-index:50;opacity:0;pointer-events:none;transition:opacity .25s}
+  .fundo.on{opacity:1;pointer-events:auto}
+  .gaveta{position:fixed;z-index:60;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--bg);transform:translateX(100%);transition:transform .3s;display:flex;flex-direction:column}
+  .gaveta.on{transform:none}
+  .g-topo{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 12px;border-bottom:1px solid var(--line)}
+  .g-topo h2{font-size:24px}
+  .fechar{width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid var(--line);font-size:20px}
+  .g-corpo{flex:1;overflow:auto;padding:16px 18px 24px}
+  .g-item{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px}
+  .g-item img{width:56px;height:56px;border-radius:10px;object-fit:cover}
+  .g-item .t{flex:1;min-width:0}
+  .g-item b{display:block;font-size:15px}
+  .g-item small{color:var(--ink2)}
+  .g-item .qtd button{width:34px;height:34px;font-size:19px}
+  .bloco{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:14px}
+  .bloco h3{font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .retirada-aviso{display:flex;gap:10px;align-items:flex-start;background:var(--brand-l);border-radius:12px;padding:10px 12px;font-size:13.5px;color:var(--brand-d);margin-bottom:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:9px 12px;font-weight:700;font-size:14px;text-align:center}
+  .chip small{display:block;font-weight:600;color:var(--muted);font-size:11.5px}
+  .chip.sel{border-color:var(--brand);background:var(--brand-l);color:var(--brand-d)}
+  .chip.sel small{color:var(--brand-d)}
+  .chip:disabled{opacity:.4}
+  label.campo{display:block;font-size:13px;font-weight:800;color:var(--ink2);margin:10px 0 5px}
+  .inp{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;background:#fff;font-size:15px;outline:none}
+  .inp:focus{border-color:var(--brand)}
+  .resumo{margin-top:14px;font-size:15px}
+  .resumo div{display:flex;justify-content:space-between;padding:4px 0}
+  .resumo .tot{font-family:'Oswald';font-size:22px;border-top:1px dashed var(--line);margin-top:6px;padding-top:10px}
+  .g-rodape{padding:14px 18px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#fff}
+  .btn-zap{width:100%;background:#1FA855;color:#fff;font-weight:800;font-size:17px;border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:center;gap:10px}
+  .btn-zap:disabled{background:#cfc4ba}
+  .erro{color:var(--off);font-size:13px;font-weight:700;margin-top:8px;min-height:18px;text-align:center}
+  .vazio{text-align:center;color:var(--ink2);padding:40px 10px}
+  .vazio div{font-size:44px}
+
+  /* confirmação */
+  .ok-tela{text-align:center;padding:30px 10px}
+  .ok-tela .ic{width:74px;height:74px;border-radius:50%;background:var(--ok-l);color:var(--ok);display:grid;place-items:center;font-size:38px;margin:0 auto 14px}
+  .ok-tela h2{font-size:26px}
+  .ok-tela .cod{display:inline-block;margin:12px 0;background:#fff;border:1.5px dashed var(--brand);color:var(--brand-d);font-family:'Oswald';font-size:24px;padding:8px 18px;border-radius:12px}
+
+  .toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;font-size:14px;opacity:0;transition:.25s;z-index:80;pointer-events:none}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+
+  @media (max-width:820px){
+    .hero .wrap{grid-template-columns:1fr}
+    .hero .foto{aspect-ratio:16/10;order:-1}
+    .grade{grid-template-columns:1fr}
+    .passos,.infos{grid-template-columns:1fr}
+    .passo{padding:12px 14px}
+  }
+  @media (max-width:420px){
+    .prod .img{width:118px}
+    .prod h3{font-size:18px}
+    .prod .preco{font-size:21px}
+    .topo .status{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="wrap">
+    <img src="img/logo.png" alt="Logo Frangos & Assados">
+    <div class="marca"><b>Frangos &amp; Assados</b><span>19 anos de tradição 🧡</span></div>
+    <span class="status" id="statusLoja"></span>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="selo">🛍️ Pedido para retirada no local</span>
+      <h1>O melhor frango assado <em>da região</em>, sem fila.</h1>
+      <p class="sub">Escolha o seu, marque o dia e o horário e retire quentinho no balcão. Retirada aos sábados e domingos, das 11h às 13h.</p>
+      <div class="acoes">
+        <a class="btn btn-pri" href="#cardapio">Ver cardápio e pedir</a>
+        <a class="btn btn-sec" href="#infos">Onde retirar</a>
+      </div>
+    </div>
+    <div class="foto">
+      <img src="img/frango.jpg" alt="Frangos assados" id="fotoHero">
+      <div class="tag"><img src="img/logo.png" alt=""><div><b>Desde 2006</b><span>Tempero tradicional da família</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="passos">
+    <div class="passo"><div class="n">1</div><div><b>Escolha o seu pedido</b><span>Frango inteiro ou meio, polenta e maionese.</span></div></div>
+    <div class="passo"><div class="n">2</div><div><b>Marque dia e horário</b><span>Sábado ou domingo, das 11h às 13h.</span></div></div>
+    <div class="passo"><div class="n">3</div><div><b>Envie e retire</b><span>O pedido vai pelo WhatsApp. É só chegar e pegar.</span></div></div>
+  </div>
+</div>
+
+<section class="cardapio" id="cardapio">
+  <div class="wrap">
+    <div class="sec-tit">
+      <div><h2>Cardápio</h2><p>Preços para retirada no local</p></div>
+    </div>
+    <div class="grade" id="grade"></div>
+  </div>
+</section>
+
+<div class="wrap" id="infos">
+  <div class="infos">
+    <div class="info-card"><div class="ic">🕖</div><b>Horário</b><p>Sábados e domingos, das 07:00 às 13:00<br><b style="font-family:inherit;font-size:14px;display:inline;color:var(--brand-d)">Retirada dos pedidos: 11:00 às 13:00</b></p></div>
+    <div class="info-card"><div class="ic">📍</div><b>Retirada no local</b><p id="enderecoTxt"></p><p style="margin-top:6px"><a id="mapaLink" target="_blank" rel="noopener">Ver no mapa →</a></p></div>
+    <div class="info-card"><div class="ic">☎️</div><b>Fale com a gente</b><p><a id="telLink"></a><br><a id="instaLink" target="_blank" rel="noopener"></a></p></div>
+  </div>
+</div>
+
+<footer>
+  <div>© <span id="ano"></span> Frangos &amp; Assados</div>
+  <a class="tf" href="https://wa.me/5551982165186?text=Ol%C3%A1!%20Vi%20o%20site%20do%20C%C3%A9sar%20Frangos%20e%20quero%20saber%20mais." target="_blank" rel="noopener">Site desenvolvido por <b>TF Solutions</b></a>
+</footer>
+
+<!-- barra do carrinho -->
+<div class="barra" id="barra">
+  <button onclick="abrirCarrinho()"><span><span class="qt" id="barraQt">0</span>Ver meu pedido</span><span id="barraTotal">R$ 0,00</span></button>
+</div>
+
+<div class="fundo" id="fundo" onclick="fecharCarrinho()"></div>
+<aside class="gaveta" id="gaveta" aria-label="Seu pedido">
+  <div class="g-topo"><h2>Seu pedido</h2><button class="fechar" onclick="fecharCarrinho()" aria-label="Fechar">✕</button></div>
+  <div class="g-corpo" id="gCorpo"></div>
+  <div class="g-rodape" id="gRodape"></div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/dados.js"></script>
+<script>
+  const db = CF.carregar();
+  const cfg = db.config;
+  let carrinho = [];           // [{pid, qtd}]
+  let escolha = { dia: null, hora: null };
+  const nomeSalvo = (() => { try { return JSON.parse(localStorage.getItem('fa_cliente') || '{}'); } catch (e) { return {}; } })();
+
+  const $ = id => document.getElementById(id);
+  const prodPor = id => db.produtos.find(p => p.id === id);
+  const qtdNo = id => (carrinho.find(c => c.pid === id) || {}).qtd || 0;
+  const diaSemana = d => ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.getDay()];
+
+  function toast(t) { const el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 1800); }
+
+  /* ---- status da loja ---- */
+  function status() {
+    const el = $('statusLoja');
+    if (CF.lojaAberta(cfg)) { el.className = 'status st-aberto'; el.textContent = '● Aberto até 13h'; }
+    else { el.className = 'status st-fechado'; el.textContent = 'Encomendas abertas'; }
+  }
+
+  /* ---- cardápio ---- */
+  function renderGrade() {
+    $('grade').innerHTML = db.produtos.filter(p => p.ativo).map(p => {
+      const resto = CF.disponivel(db, p, carrinho);
+      const q = qtdNo(p.id);
+      const esgot = resto <= 0 && q === 0;
+      let estq = '';
+      if (esgot) estq = '<span class="estq zero">Esgotado por hoje</span>';
+      else if (resto <= 5) estq = `<span class="estq pouco">Restam ${resto}</span>`;
+      const ctrl = q > 0
+        ? `<div class="qtd"><button onclick="mudar('${p.id}',-1)" aria-label="Menos">−</button><span>${q}</span><button onclick="mudar('${p.id}',1)" aria-label="Mais" ${resto <= 0 ? 'disabled style="opacity:.35"' : ''}>+</button></div>`
+        : `<button class="add" onclick="mudar('${p.id}',1)" ${esgot ? 'disabled' : ''}>${esgot ? 'Esgotado' : 'Adicionar'}</button>`;
+      return `<article class="prod" id="produto-${p.id}">
+        <div class="img"><img src="${p.img || 'img/logo.png'}" alt="${p.nome}" loading="lazy" class="${p.img ? '' : 'sem-foto'}">${p.destaque ? `<span class="badge">${p.destaque}</span>` : ''}</div>
+        <div class="info">
+          <h3>${p.nome}</h3>
+          <p class="desc">${p.desc}</p>
+          ${estq}
+          <div class="base"><span class="preco">${CF.brl(p.preco)}</span>${ctrl}</div>
+          <button class="link-prod" onclick="copiarLink('${p.id}')" style="align-self:flex-start">🔗 Copiar link deste item</button>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  function mudar(id, d) {
+    const p = prodPor(id);
+    const item = carrinho.find(c => c.pid === id);
+    if (d > 0 && CF.disponivel(db, p, carrinho) <= 0) { toast('Acabou o estoque deste item 😕'); return; }
+    if (item) { item.qtd += d; if (item.qtd <= 0) carrinho = carrinho.filter(c => c !== item); }
+    else if (d > 0) { carrinho.push({ pid: id, qtd: 1 }); toast(`${p.nome} adicionado ✓`); }
+    atualizar();
+  }
+
+  function atualizar() {
+    renderGrade();
+    const qt = carrinho.reduce((a, c) => a + c.qtd, 0);
+    const tot = carrinho.reduce((a, c) => a + prodPor(c.pid).preco * c.qtd, 0);
+    $('barra').classList.toggle('on', qt > 0);
+    $('barraQt').textContent = qt;
+    $('barraTotal').textContent = CF.brl(tot);
+    if ($('gaveta').classList.contains('on')) renderCarrinho();
+  }
+
+  function copiarLink(id) {
+    const url = location.href.split('#')[0] + '#produto/' + id;
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => toast('Link copiado! Cole no WhatsApp 📲')).catch(() => prompt('Copie o link:', url));
+  }
+
+  function abrirPorLink() {
+    const m = location.hash.match(/^#produto\/(.+)$/);
+    if (!m) return;
+    const el = $('produto-' + m[1]);
+    if (!el) return;
+    setTimeout(() => { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('destaque-link'); setTimeout(() => el.classList.remove('destaque-link'), 3500); }, 250);
+  }
+
+  /* ---- carrinho ---- */
+  function abrirCarrinho() { $('fundo').classList.add('on'); $('gaveta').classList.add('on'); renderCarrinho(); }
+  function fecharCarrinho() { $('fundo').classList.remove('on'); $('gaveta').classList.remove('on'); }
+
+  function renderCarrinho() {
+    if (!carrinho.length) {
+      $('gCorpo').innerHTML = '<div class="vazio"><div>🍗</div><p>Seu pedido está vazio.<br>Escolha um item no cardápio.</p></div>';
+      $('gRodape').innerHTML = '<button class="btn btn-pri" style="width:100%" onclick="fecharCarrinho()">Ver cardápio</button>';
+      return;
+    }
+    const dias = CF.diasRetirada(cfg);
+    if (!escolha.dia || !dias.some(d => CF.dataISO(d) === escolha.dia)) escolha.dia = dias[0] ? CF.dataISO(dias[0]) : null;
+    const diaObj = dias.find(d => CF.dataISO(d) === escolha.dia);
+    const horas = diaObj ? CF.horariosRetirada(cfg, diaObj) : [];
+    if (!horas.includes(escolha.hora)) escolha.hora = null;
+    const tot = carrinho.reduce((a, c) => a + prodPor(c.pid).preco * c.qtd, 0);
+
+    $('gCorpo').innerHTML = `
+      ${carrinho.map(c => { const p = prodPor(c.pid); return `
+        <div class="g-item"><img src="${p.img || 'img/logo.png'}" alt="">
+          <div class="t"><b>${p.nome}</b><small>${CF.brl(p.preco)} cada</small></div>
+          <div class="qtd"><button onclick="mudar('${p.id}',-1)">−</button><span>${c.qtd}</span><button onclick="mudar('${p.id}',1)">+</button></div>
+        </div>`; }).join('')}
+
+      <div class="bloco">
+        <h3>🛍️ Retirada no local</h3>
+        <div class="retirada-aviso"><span>📍</span><span>Não fazemos entrega. Seu pedido fica separado para você retirar no balcão no horário marcado.</span></div>
+        <label class="campo">Dia da retirada</label>
+        <div class="chips">${dias.map(d => { const iso = CF.dataISO(d); const hoje = iso === CF.dataISO(new Date());
+          return `<button class="chip ${iso === escolha.dia ? 'sel' : ''}" onclick="escolha.dia='${iso}';escolha.hora=null;renderCarrinho()">${hoje ? 'Hoje' : diaSemana(d)}<small>${CF.pad(d.getDate())}/${CF.pad(d.getMonth() + 1)}</small></button>`; }).join('')}</div>
+        <label class="campo">Horário aproximado</label>
+        <div class="chips">${horas.map(h => `<button class="chip ${h === escolha.hora ? 'sel' : ''}" onclick="escolha.hora='${h}';renderCarrinho()">${h}</button>`).join('') || '<small style="color:var(--muted)">Escolha outro dia.</small>'}</div>
+      </div>
+
+      <div class="bloco">
+        <h3>🙋 Seus dados</h3>
+        <label class="campo" for="cNome">Nome para retirada</label>
+        <input class="inp" id="cNome" placeholder="Ex.: Maria Silva" value="${nomeSalvo.nome || ''}" autocomplete="name">
+        <label class="campo" for="cFone">WhatsApp</label>
+        <input class="inp" id="cFone" placeholder="(51) 99999-9999" inputmode="tel" value="${nomeSalvo.fone || ''}" autocomplete="tel">
+        <label class="campo" for="cObs">Observação (opcional)</label>
+        <textarea class="inp" id="cObs" rows="2" placeholder="Ex.: frango bem passado, sem cebola na maionese..."></textarea>
+      </div>
+
+      <div class="resumo">
+        <div><span>Itens</span><span>${CF.brl(tot)}</span></div>
+        <div><span>Retirada</span><span style="color:var(--ok);font-weight:800">Grátis</span></div>
+        <div class="tot"><span>Total</span><span>${CF.brl(tot)}</span></div>
+        <p style="font-size:12.5px;color:var(--muted);margin-top:6px">Pagamento na retirada (Pix, cartão ou dinheiro).</p>
+      </div>`;
+    $('gRodape').innerHTML = `<button class="btn-zap" onclick="enviar()">${iconeZap} Enviar pedido pelo WhatsApp</button><div class="erro" id="erro"></div>`;
+  }
+
+  const iconeZap = '<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.3 23.7l6.1-1.6a11.8 11.8 0 0 0 5.6 1.4c6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.3-8.2Zm-8.4 18.1c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.6.9 1-3.5-.2-.4a9.8 9.8 0 1 1 8.2 4.6Zm5.4-7.3c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-4-3.5c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.4 13.4 0 0 0 5.2 4.6c1.9.8 2.7.9 3.6.7.6-.1 1.8-.7 2-1.5.3-.7.3-1.3.2-1.5l-.6-.4Z"/></svg>';
+
+  function enviar() {
+    const nome = $('cNome').value.trim();
+    const fone = $('cFone').value.trim();
+    const obs = $('cObs').value.trim();
+    const erro = t => { $('erro').textContent = t; };
+    if (!escolha.dia) return erro('Escolha o dia da retirada.');
+    if (!escolha.hora) return erro('Escolha o horário da retirada.');
+    if (nome.length < 2) { $('cNome').focus(); return erro('Coloque seu nome para retirada.'); }
+    if (fone.replace(/\D/g, '').length < 10) { $('cFone').focus(); return erro('Coloque seu WhatsApp com DDD.'); }
+    // confere estoque de novo antes de enviar
+    for (const c of carrinho) {
+      const p = prodPor(c.pid);
+      const outros = carrinho.filter(x => x !== c);
+      if (CF.disponivel(db, p, outros) < c.qtd) return erro(`Só temos ${CF.disponivel(db, p, outros)} de ${p.nome} agora.`);
+    }
+    try { localStorage.setItem('fa_cliente', JSON.stringify({ nome, fone })); } catch (e) {}
+
+    const agora = new Date();
+    const ped = CF.registrarPedido(db, {
+      origem: 'site', cliente: nome, fone,
+      itens: carrinho.map(c => { const p = prodPor(c.pid); return { pid: p.id, nome: p.nome, preco: p.preco, qtd: c.qtd }; }),
+      retirada: { data: escolha.dia, hora: escolha.hora }, obs, status: 'novo',
+      criado: CF.dataISO(agora) + 'T' + CF.pad(agora.getHours()) + ':' + CF.pad(agora.getMinutes())
+    });
+
+    const [a, m, d] = escolha.dia.split('-');
+    const diaTxt = diaSemana(new Date(+a, +m - 1, +d));
+    const linhas = [
+      `*Pedido #${ped.codigo} — Frangos & Assados*`,
+      '',
+      ...ped.itens.map(i => `• ${i.qtd}x ${i.nome} — ${CF.brl(i.preco * i.qtd)}`),
+      '',
+      `*Total: ${CF.brl(ped.total)}*`,
+      `🛍️ *Retirada no local*: ${diaTxt}, ${d}/${m} por volta das ${escolha.hora}`,
+      `🙋 Nome: ${nome}`,
+      `📱 WhatsApp: ${fone}`,
+      obs ? `📝 Obs.: ${obs}` : '',
+      '',
+      'Pagamento na retirada.'
+    ].filter((l, i, arr) => !(l === '' && arr[i - 1] === ''));
+    const url = `https://wa.me/${cfg.whatsapp}?text=${encodeURIComponent(linhas.join('\n'))}`;
+
+    carrinho = [];
+    atualizar();
+    $('gCorpo').innerHTML = `<div class="ok-tela"><div class="ic">✓</div><h2>Pedido separado!</h2>
+      <p>Guarde o número do seu pedido:</p><div class="cod">#${ped.codigo}</div>
+      <p style="color:var(--ink2)">Retirada: <b>${diaTxt}, ${d}/${m} às ${escolha.hora}</b><br>Se o WhatsApp não abriu, toque no botão abaixo.</p></div>`;
+    $('gRodape').innerHTML = `<a class="btn-zap" style="text-decoration:none" href="${url}" target="_blank" rel="noopener">${iconeZap} Abrir WhatsApp</a>`;
+    window.open(url, '_blank');
+  }
+
+  /* ---- informações ---- */
+  $('enderecoTxt').textContent = cfg.endereco;
+  $('mapaLink').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(cfg.endereco + ' ' + cfg.nome);
+  $('telLink').textContent = cfg.telefone; $('telLink').href = 'tel:+' + cfg.whatsapp;
+  $('instaLink').textContent = '@' + cfg.instagram; $('instaLink').href = 'https://instagram.com/' + cfg.instagram;
+  $('ano').textContent = new Date().getFullYear();
+
+  const fp = prodPor('frango-com-polenta'); if (fp && fp.img) $('fotoHero').src = fp.img;
+  status(); atualizar(); abrirPorLink();
+  window.addEventListener('hashchange', abrirPorLink);
+</script>
+</body>
+</html>
