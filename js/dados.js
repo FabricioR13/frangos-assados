@@ -1,7 +1,7 @@
 /* Frangos & Assados — dados da demonstração (salvos no navegador)
    Na versão final estes dados ficam no Firebase. */
 (function () {
-  const CHAVE = 'frangos_assados_demo_v7';
+  const CHAVE = 'frangos_assados_demo_v8';
 
   const ITENS_ESTOQUE = [
     { id: 'frango',   nome: 'Frangos',            un: 'un',     icone: '🍗', aviso1: 10, aviso2: 5 },
@@ -13,16 +13,16 @@
   ];
 
   const PRODUTOS_PADRAO = [
-    { id: 'frango-com-polenta', nome: 'Frango com polenta', preco: 60, img: 'img/frango.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
+    { id: 'frango-com-polenta', nome: 'Frango com polenta', preco: 60, img: 'img/foto-frango.jpg', foto: { modo: 'inteira', x: 50, y: 50, zoom: 1 },
       desc: 'Frango bem assadinho com o nosso tempero tradicional, acompanhado de uma porção da nossa famosa polenta frita!',
       consumo: { frango: 1, polenta: 1 }, ativo: true, destaque: 'Mais pedido', categoria: 'Assados' },
-    { id: 'meio-frango-com-polenta', nome: '½ frango com polenta', preco: 32, img: 'img/meio-frango.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
+    { id: 'meio-frango-com-polenta', nome: '½ frango com polenta', preco: 32, img: 'img/foto-frango.jpg', foto: { modo: 'inteira', x: 50, y: 50, zoom: 1 },
       desc: 'Metade de um frango bem assadinho com o nosso tempero tradicional, acompanhado de uma porção da nossa famosa polenta frita!',
       consumo: { frango: 0.5, polenta: 1 }, ativo: true, destaque: '', categoria: 'Assados' },
-    { id: 'polenta-extra', nome: 'Polenta extra', preco: 5, img: 'img/polenta.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
+    { id: 'polenta-extra', nome: 'Polenta extra', preco: 5, img: 'img/foto-polenta.jpg', foto: { modo: 'inteira', x: 50, y: 50, zoom: 1 },
       desc: 'Nossa famosa polenta frita. Depois de experimentar, a polenta extra não vai ser mais opção! Porção com 6 pedaços.',
       consumo: { polenta: 1 }, ativo: true, destaque: '', categoria: 'Acompanhamentos' },
-    { id: 'salada-de-maionese', nome: 'Salada de maionese', preco: 14, img: 'img/maionese.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
+    { id: 'salada-de-maionese', nome: 'Salada de maionese', preco: 14, img: 'img/foto-maionese.jpg', foto: { modo: 'inteira', x: 50, y: 50, zoom: 1 },
       desc: 'Porção perfeita para um almoço. Salada fresquinha feita no dia, com cebola e salsinha trituradas e temperada com carinho! Porção de 500 g.',
       consumo: { maionese: 1 }, ativo: true, destaque: 'Feita no dia', categoria: 'Acompanhamentos' },
     { id: 'coca-cola-2l', nome: 'Coca-Cola 2 L', preco: 15, img: 'img/refri-coca.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },

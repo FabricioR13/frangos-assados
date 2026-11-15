@@ -200,7 +200,7 @@
       </div>
     </div>
     <div class="foto">
-      <img src="img/frango.jpg" alt="Frangos assados" id="fotoHero">
+      <img src="img/foto-frango.jpg" alt="Frangos assados" id="fotoHero">
       <div class="tag"><img src="img/logo.png" alt=""><div><b>Desde 2006</b><span>Tempero tradicional da família</span></div></div>
     </div>
   </div>
@@ -250,7 +250,7 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="js/dados.js?v=20261114d"></script>
+<script src="js/dados.js?v=20261114e"></script>
 <script>
   if (!window.CF || !CF.fotoHTML) { if (!sessionStorage.getItem('recarregou')) { sessionStorage.setItem('recarregou', '1'); location.reload(); } }
   const db = CF.carregar();
@@ -449,7 +449,7 @@
   function recarregarDados() {
     Object.assign(db, CF.carregar());
     Object.assign(cfg, db.config);
-    const f = prodPor('frango-com-polenta'); $('fotoHero').src = (f && f.img) || 'img/frango.jpg';
+    const f = prodPor('frango-com-polenta'); $('fotoHero').src = (f && f.img) || 'img/foto-frango.jpg';
     $('enderecoTxt').textContent = cfg.endereco;
     $('telLink').textContent = cfg.telefone;
     carrinho = carrinho.filter(c => prodPor(c.pid) && prodPor(c.pid).ativo);
