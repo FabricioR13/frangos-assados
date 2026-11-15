@@ -530,7 +530,7 @@ function estoque() {
 }
 
 let mov = {};
-const MOTIVOS = { entrada: ['Produção do dia', 'Produção prevista para o fim de semana', 'Compra de frangos', 'Ajuste de contagem'], saida: ['Perda / estragou', 'Consumo da família/equipe', 'Doação', 'Sobra do dia (consumo/perda)', 'Ajuste de contagem'] };
+const MOTIVOS = { entrada: ['Produção do dia', 'Produção prevista para o fim de semana', 'Compra de refrigerantes', 'Compra de frangos', 'Ajuste de contagem'], saida: ['Perda / estragou', 'Consumo da família/equipe', 'Doação', 'Sobra do dia (consumo/perda)', 'Ajuste de contagem'] };
 function modalMov(item, tipo) { mov = { item: item || 'frango', tipo: tipo || 'entrada', qtd: '', motivo: null }; desenharMov(); }
 function desenharMov() {
   if (!MOTIVOS[mov.tipo].includes(mov.motivo)) mov.motivo = MOTIVOS[mov.tipo][0];

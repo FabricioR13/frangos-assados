@@ -1,27 +1,36 @@
 /* Frangos & Assados — dados da demonstração (salvos no navegador)
    Na versão final estes dados ficam no Firebase. */
 (function () {
-  const CHAVE = 'frangos_assados_demo_v2';
+  const CHAVE = 'frangos_assados_demo_v3';
 
   const ITENS_ESTOQUE = [
     { id: 'frango',   nome: 'Frangos',            un: 'un',     icone: '🍗', aviso1: 10, aviso2: 5 },
     { id: 'polenta',  nome: 'Polenta frita',      un: 'porções', icone: '🟨', aviso1: 15, aviso2: 5 },
-    { id: 'maionese', nome: 'Salada de maionese', un: 'potes 500g', icone: '🥗', aviso1: 5, aviso2: 2 }
+    { id: 'maionese', nome: 'Salada de maionese', un: 'potes 500g', icone: '🥗', aviso1: 5, aviso2: 2 },
+    { id: 'coca',     nome: 'Coca-Cola 2 L',      un: 'garrafas', icone: '🥤', aviso1: 6, aviso2: 3, naoPerecivel: true },
+    { id: 'cocazero', nome: 'Coca-Cola Zero 2 L', un: 'garrafas', icone: '🥤', aviso1: 4, aviso2: 2, naoPerecivel: true },
+    { id: 'guarana',  nome: 'Guaraná 2 L',        un: 'garrafas', icone: '🥤', aviso1: 4, aviso2: 2, naoPerecivel: true }
   ];
 
   const PRODUTOS_PADRAO = [
     { id: 'frango-com-polenta', nome: 'Frango com polenta', preco: 60, img: 'img/frango.jpg',
       desc: 'Frango bem assadinho com o nosso tempero tradicional, acompanhado de uma porção da nossa famosa polenta frita!',
-      consumo: { frango: 1, polenta: 1 }, ativo: true, destaque: 'Mais pedido' },
+      consumo: { frango: 1, polenta: 1 }, ativo: true, destaque: 'Mais pedido', categoria: 'Assados' },
     { id: 'meio-frango-com-polenta', nome: '½ frango com polenta', preco: 32, img: 'img/meio-frango.jpg',
       desc: 'Metade de um frango bem assadinho com o nosso tempero tradicional, acompanhado de uma porção da nossa famosa polenta frita!',
-      consumo: { frango: 0.5, polenta: 1 }, ativo: true, destaque: '' },
+      consumo: { frango: 0.5, polenta: 1 }, ativo: true, destaque: '', categoria: 'Assados' },
     { id: 'polenta-extra', nome: 'Polenta extra', preco: 5, img: 'img/polenta.jpg',
       desc: 'Nossa famosa polenta frita. Depois de experimentar, a polenta extra não vai ser mais opção! Porção com 6 pedaços.',
-      consumo: { polenta: 1 }, ativo: true, destaque: '' },
+      consumo: { polenta: 1 }, ativo: true, destaque: '', categoria: 'Acompanhamentos' },
     { id: 'salada-de-maionese', nome: 'Salada de maionese', preco: 14, img: 'img/maionese.jpg',
       desc: 'Porção perfeita para um almoço. Salada fresquinha feita no dia, com cebola e salsinha trituradas e temperada com carinho! Porção de 500 g.',
-      consumo: { maionese: 1 }, ativo: true, destaque: 'Feita no dia' }
+      consumo: { maionese: 1 }, ativo: true, destaque: 'Feita no dia', categoria: 'Acompanhamentos' },
+    { id: 'coca-cola-2l', nome: 'Coca-Cola 2 L', preco: 15, img: 'img/coca.jpg',
+      desc: 'Refrigerante Coca-Cola, garrafa de 2 litros.', consumo: { coca: 1 }, ativo: true, destaque: '', categoria: 'Bebidas' },
+    { id: 'coca-cola-zero-2l', nome: 'Coca-Cola Zero 2 L', preco: 15, img: 'img/coca-zero.jpg',
+      desc: 'Refrigerante Coca-Cola sem açúcar, garrafa de 2 litros.', consumo: { cocazero: 1 }, ativo: true, destaque: '', categoria: 'Bebidas' },
+    { id: 'guarana-2l', nome: 'Guaraná 2 L', preco: 10, img: 'img/guarana.jpg',
+      desc: 'Refrigerante de guaraná, garrafa de 2 litros.', consumo: { guarana: 1 }, ativo: true, destaque: '', categoria: 'Bebidas' }
   ];
 
   const CONFIG_PADRAO = {
@@ -97,6 +106,10 @@
       movs.push({ id: uid(), data: dataEnt, item: 'frango', tipo: 'entrada', qtd: entradaFrango, motivo: motivoEnt });
       movs.push({ id: uid(), data: dataEnt, item: 'polenta', tipo: 'entrada', qtd: domingo ? 170 : 140, motivo: motivoEnt });
       movs.push({ id: uid(), data: dataEnt, item: 'maionese', tipo: 'entrada', qtd: domingo ? 55 : 45, motivo: motivoEnt });
+      [['coca', 36], ['cocazero', 12], ['guarana', 12]].forEach(([item, lote]) => {
+        const sd = movs.filter(m => m.item === item).reduce((a, m) => a + (m.tipo === 'entrada' ? m.qtd : -m.qtd), 0);
+        if (sd < lote / 2) movs.push({ id: uid(), data: dataEnt, item, tipo: 'entrada', qtd: lote, motivo: 'Compra de refrigerantes' });
+      });
 
       let frangosVendidos = 0;
       const alvo = entradaFrango * fatorVenda * (0.86 + r() * 0.14);
@@ -107,6 +120,10 @@
         else itens.push({ pid: 'meio-frango-com-polenta', qtd: 1 });
         if (r() < 0.45) itens.push({ pid: 'salada-de-maionese', qtd: r() < 0.8 ? 1 : 2 });
         if (r() < 0.35) itens.push({ pid: 'polenta-extra', qtd: 1 + Math.floor(r() * 3) });
+        const rb = r();
+        if (rb < 0.22) itens.push({ pid: 'coca-cola-2l', qtd: 1 });
+        else if (rb < 0.30) itens.push({ pid: 'coca-cola-zero-2l', qtd: 1 });
+        else if (rb < 0.40) itens.push({ pid: 'guarana-2l', qtd: 1 });
         itens.forEach(it => { const p = produtos.find(p => p.id === it.pid); it.nome = p.nome; it.preco = p.preco; });
         // respeita o estoque do dia: tira o que não tem mais
         const saldoSim = item => movs.filter(m => m.item === item).reduce((a, m) => a + (m.tipo === 'entrada' ? m.qtd : -m.qtd), 0);
@@ -133,7 +150,7 @@
       }
       if (fechado) {
         // sobra do dia sai como consumo/perda para zerar
-        ['frango', 'polenta', 'maionese'].forEach(item => {
+        ['frango', 'polenta', 'maionese'].forEach(item => {  // refrigerante não estraga: sobra fica no estoque
           const saldo = movs.filter(m => m.item === item).reduce((a, m) => a + (m.tipo === 'entrada' ? m.qtd : -m.qtd), 0);
           if (saldo > 0) movs.push({ id: uid(), data: iso + 'T13:30', item, tipo: 'saida', qtd: Math.round(saldo * 10) / 10, motivo: 'Sobra do dia (consumo/perda)' });
         });
