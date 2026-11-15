@@ -250,7 +250,7 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="js/dados.js?v=20261114e"></script>
+<script src="js/dados.js?v=20261114f"></script>
 <script>
   if (!window.CF || !CF.fotoHTML) { if (!sessionStorage.getItem('recarregou')) { sessionStorage.setItem('recarregou', '1'); location.reload(); } }
   const db = CF.carregar();
@@ -370,7 +370,7 @@
         <label class="campo" for="cNome">Nome para retirada</label>
         <input class="inp" id="cNome" placeholder="Ex.: Maria Silva" value="${nomeSalvo.nome || ''}" autocomplete="name">
         <label class="campo" for="cFone">WhatsApp</label>
-        <input class="inp" id="cFone" placeholder="(51) 99999-9999" inputmode="tel" value="${nomeSalvo.fone || ''}" autocomplete="tel">
+        <input class="inp" id="cFone" placeholder="(51) 99999-9999" inputmode="tel" maxlength="15" value="${CF.formatarFone(nomeSalvo.fone || '')}" autocomplete="tel">
         <label class="campo" for="cObs">Observação (opcional)</label>
         <textarea class="inp" id="cObs" rows="2" placeholder="Ex.: frango bem passado, sem cebola na maionese..."></textarea>
       </div>
@@ -381,6 +381,7 @@
         <div class="tot"><span>Total</span><span>${CF.brl(tot)}</span></div>
         <p style="font-size:12.5px;color:var(--muted);margin-top:6px">Pagamento na retirada (Pix, cartão ou dinheiro).</p>
       </div>`;
+    CF.mascaraFone($('cFone'));
     $('gRodape').innerHTML = `<button class="btn-zap" onclick="enviar()">${iconeZap} Enviar pedido pelo WhatsApp</button><div class="erro" id="erro"></div>`;
   }
 
@@ -394,7 +395,7 @@
     if (!escolha.dia) return erro('Escolha o dia da retirada.');
     if (!escolha.hora) return erro('Escolha o horário da retirada.');
     if (nome.length < 2) { $('cNome').focus(); return erro('Coloque seu nome para retirada.'); }
-    if (fone.replace(/\D/g, '').length < 10) { $('cFone').focus(); return erro('Coloque seu WhatsApp com DDD.'); }
+    if (!CF.foneValido(fone, 'celular')) { $('cFone').focus(); return erro('WhatsApp inválido. Use DDD + 9 números, ex.: (51) 99999-9999.'); }
     // confere estoque de novo antes de enviar
     for (const c of carrinho) {
       const p = prodPor(c.pid);

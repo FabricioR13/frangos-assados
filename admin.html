@@ -251,7 +251,7 @@
 <div class="fundo" id="fundo"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
 
-<script src="js/dados.js?v=20261114e"></script>
+<script src="js/dados.js?v=20261114f"></script>
 <script>
   if (!window.CF || !CF.fotoHTML) { if (!sessionStorage.getItem('recarregou')) { sessionStorage.setItem('recarregou', '1'); location.reload(); } }
 let db = CF.carregar();
@@ -804,8 +804,8 @@ function config() {
     <div class="cab"><div><h1>Configurações</h1><p>Dados que aparecem no site</p></div></div>
     <div class="grid g2">
       <div class="card"><h3>Loja</h3>
-        <label class="campo">WhatsApp que recebe os pedidos (com 55 e DDD)</label><input class="inp" id="cZap" value="${c.whatsapp}">
-        <label class="campo">Telefone</label><input class="inp" id="cTel" value="${c.telefone}">
+        <label class="campo">WhatsApp que recebe os pedidos (DDD + número)</label><input class="inp" id="cZap" placeholder="(51) 99999-9999" value="${CF.formatarFone(c.whatsapp)}">
+        <label class="campo">Telefone (fixo ou celular)</label><input class="inp" id="cTel" placeholder="(51) 3479-6365" value="${CF.formatarFone(c.telefone)}">
         <label class="campo">Endereço para retirada</label><input class="inp" id="cEnd" value="${c.endereco}">
       </div>
       <div class="card"><h3>Horários</h3>
@@ -817,11 +817,15 @@ function config() {
       </div>
     </div>
     <div style="margin-top:14px;display:flex;justify-content:flex-end"><button class="btn btn-pri" onclick="salvarConfig()">Salvar configurações</button></div>`;
+  CF.mascaraFone($('cZap')); CF.mascaraFone($('cTel'));
   document.querySelectorAll('#main .card .inp').forEach(el => el.addEventListener('change', salvarConfig));
 }
 function salvarConfig() {
   const c = db.config;
-  c.whatsapp = $('cZap').value.replace(/\D/g, ''); c.telefone = $('cTel').value; c.endereco = $('cEnd').value;
+  // WhatsApp: aceita fixo também (WhatsApp Business pode usar número fixo); só não deixa número inválido
+  if (!CF.foneValido($('cZap').value)) { toast('⚠ WhatsApp inválido: use DDD + número, ex.: (51) 99999-9999'); $('cZap').focus(); return; }
+  if ($('cTel').value && !CF.foneValido($('cTel').value)) { toast('⚠ Telefone inválido: use DDD + número'); $('cTel').focus(); return; }
+  c.whatsapp = '55' + CF.soDigitos($('cZap').value); c.telefone = CF.formatarFone($('cTel').value); c.endereco = $('cEnd').value;
   c.horaInicio = $('cIni').value; c.horaFim = $('cFim').value; c.retiradaInicio = $('cRIni').value; c.retiradaFim = $('cRFim').value;
   CF.salvar(db); toast('Configurações salvas ✓');
 }

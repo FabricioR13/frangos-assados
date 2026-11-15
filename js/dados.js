@@ -285,7 +285,49 @@
     .fx-logo{background:#fff}.fx.fx-logo img{object-fit:contain;padding:14%}`;
   try { const st = document.createElement('style'); st.textContent = FOTO_CSS; document.head.appendChild(st); } catch (e) {}
 
+  /* ---------- telefone / WhatsApp (padrão TF) ----------
+     Brasil: DDD (2 dígitos) + 9 dígitos no celular (começa com 9) ou 8 no fixo.
+     O campo só aceita números, no máximo 11, e formata sozinho: (51) 99999-9999 */
+  function soDigitos(v) {
+    let d = String(v || '').replace(/\D/g, '');
+    if (d.length > 11 && d.startsWith('55')) d = d.slice(2);   // colou com +55
+    if (d.length > 11 && d.startsWith('0')) d = d.slice(1);    // colou com 0 na frente
+    return d.slice(0, 11);
+  }
+  function formatarFone(v) {
+    const d = soDigitos(v);
+    if (d.length <= 2) return d.length ? `(${d}` : '';
+    if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  }
+  /* tipo: 'celular' (WhatsApp: 11 dígitos, 9 depois do DDD) ou 'qualquer' (fixo ou celular) */
+  function foneValido(v, tipo) {
+    const d = soDigitos(v);
+    if (!/^[1-9][1-9]/.test(d)) return false;                   // DDD válido (11 a 99, sem zero)
+    const celular = d.length === 11 && d[2] === '9';
+    const fixo = d.length === 10 && /[2-5]/.test(d[2]);
+    return tipo === 'celular' ? celular : (celular || fixo);
+  }
+  function mascaraFone(el) {
+    if (!el || el._mascara) return;
+    el._mascara = true;
+    el.setAttribute('inputmode', 'tel');
+    el.setAttribute('maxlength', '15');
+    el.value = formatarFone(el.value);
+    el.addEventListener('input', () => { el.value = formatarFone(el.value); });
+    // colar número com +55, espaços ou traços: limpa antes de cortar nos 11 dígitos
+    el.addEventListener('paste', e => {
+      const t = (e.clipboardData || window.clipboardData);
+      if (!t) return;
+      e.preventDefault();
+      el.value = formatarFone(t.getData('text'));
+      el.dispatchEvent(new Event('change'));
+    });
+  }
+
   window.CF = {
+    soDigitos, formatarFone, foneValido, mascaraFone,
     fotoHTML,
     ITENS_ESTOQUE, carregar, salvar, restaurar, saldo, disponivel, consumoDe,
     registrarPedido, cancelarPedido, diasRetirada, horariosRetirada, lojaAberta,
