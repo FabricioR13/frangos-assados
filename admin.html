@@ -152,10 +152,16 @@
   /* produtos */
   .prod-ed{display:grid;grid-template-columns:130px 1fr;gap:16px;align-items:start}
   .foto-ed{display:flex;flex-direction:column;gap:6px}
-  .foto-ed img{width:130px;height:130px;border-radius:14px;object-fit:cover;border:1px solid var(--line)}
-  .foto-ed img.sem-foto{object-fit:contain;padding:16px;background:#fff}
+  .foto-ed .miniatura{width:130px;height:190px;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .ajuste{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;margin-top:12px}
+  .prev-card{width:150px;height:220px;border-radius:14px;overflow:hidden;border:2px solid var(--brand);touch-action:none;cursor:grab;position:relative}
+  .prev-card.arrastando{cursor:grabbing}
+  .prev-card .dica-arr{position:absolute;left:6px;right:6px;bottom:6px;background:rgba(43,26,18,.75);color:#fff;font-size:11px;font-weight:700;text-align:center;border-radius:8px;padding:4px;pointer-events:none}
+  .prev-mini{width:56px;height:56px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  input[type=range]{width:100%;accent-color:var(--brand)}
+  @media (max-width:480px){.ajuste{grid-template-columns:1fr;justify-items:center}.ajuste>div:last-child{width:100%}}
   .foto-ed .btn{justify-content:center;cursor:pointer}
-  @media (max-width:560px){.prod-ed{grid-template-columns:1fr}.foto-ed{flex-direction:row;flex-wrap:wrap;align-items:center}.foto-ed img{width:96px;height:96px}}
+  @media (max-width:560px){.prod-ed{grid-template-columns:1fr}.foto-ed{flex-direction:row;flex-wrap:wrap;align-items:center}.foto-ed .miniatura{width:96px;height:140px}}
   .linha{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
   .linha > div{flex:1;min-width:140px}
   .tog{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer}
@@ -476,7 +482,7 @@ function desenharBalcao() {
     <div style="margin-top:10px">${db.produtos.map(p => {
       const q = balcao[p.id] || 0;
       const livre = CF.disponivel(db, p, Object.entries(balcao).map(([pid, qtd]) => ({ pid, qtd })));
-      return `<div class="balcao-item"><img src="${p.img || 'img/logo.png'}" alt=""><div class="t"><b>${p.nome}</b><br><small>${CF.brl(p.preco)} · ${livre > 0 ? 'dá para mais ' + livre : 'sem estoque'}</small></div>
+      return `<div class="balcao-item"><div style="width:52px;height:52px;border-radius:10px;overflow:hidden;flex:none">${CF.fotoHTML(p)}</div><div class="t"><b>${p.nome}</b><br><small>${CF.brl(p.preco)} · ${livre > 0 ? 'dá para mais ' + livre : 'sem estoque'}</small></div>
         <div class="q"><button onclick="bal('${p.id}',-1)">−</button><span>${q}</span><button onclick="bal('${p.id}',1)" ${livre <= 0 ? 'disabled style="opacity:.3"' : ''}>+</button></div></div>`;
     }).join('')}</div>
     <div style="display:flex;justify-content:space-between;margin-top:14px" class="oswald"><span style="font-size:18px">Total</span><span style="font-size:24px">${CF.brl(tot)}</span></div>
@@ -680,7 +686,8 @@ function produtos() {
     <div class="cab"><div><h1>Produtos</h1><p>Altere preço, descrição e o que aparece no site</p></div></div>
     <div class="grid" style="gap:12px">${db.produtos.map((p, i) => `
       <div class="card prod-ed"><div class="foto-ed">
-        <img src="${p.img || 'img/logo.png'}" alt="" class="${p.img ? '' : 'sem-foto'}">
+        <div class="miniatura" title="Assim aparece no site">${CF.fotoHTML(p)}</div>
+        ${p.img ? `<button class="btn btn-pri btn-peq" style="justify-content:center" onclick="modalAjuste(${i})">✂️ Ajustar foto</button>` : ''}
         <label class="btn btn-sec btn-peq">📷 ${p.img ? 'Trocar foto' : 'Colocar foto'}<input type="file" accept="image/*" hidden onchange="trocarFoto(${i}, this)"></label>
         ${p.img ? `<button class="btn btn-sec btn-peq" style="color:var(--off)" onclick="removerFoto(${i})">🗑 Remover</button>` : '<small style="color:var(--muted);font-size:11.5px">Sem foto: o site mostra o logo</small>'}
       </div>
@@ -711,13 +718,78 @@ function trocarFoto(i, input) {
       cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
       cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
       db.produtos[i].img = cv.toDataURL('image/jpeg', 0.84);
-      CF.salvar(db); toast('Foto trocada ✓ Já aparece no site'); produtos();
+      db.produtos[i].foto = { modo: 'inteira', x: 50, y: 50, zoom: 1 };
+      CF.salvar(db); produtos(); modalAjuste(i, true);
     };
     img.onerror = () => toast('Não consegui abrir essa imagem');
     img.src = leitor.result;
   };
   leitor.readAsDataURL(arq);
 }
+/* ajuste da foto: inteira ou recortada, com zoom e posição */
+let aj = null;
+function modalAjuste(i, nova) {
+  const p = db.produtos[i];
+  aj = { i, f: Object.assign({ modo: 'recortar', x: 50, y: 50, zoom: 1 }, p.foto || {}), nova };
+  desenharAjuste();
+}
+function desenharAjuste() {
+  const p = db.produtos[aj.i], f = aj.f;
+  const prev = { ...p, foto: f };
+  abrirModal(`<h2>${aj.nova ? 'Foto nova! Como ela deve aparecer?' : 'Ajustar foto'}</h2><p class="sub">${p.nome}</p>
+    <label class="campo">Como mostrar</label>
+    <div class="seg seg2">
+      <button class="${f.modo === 'inteira' ? 'on' : ''}" onclick="aj.f.modo='inteira';desenharAjuste()">🖼️ Foto inteira<br><small style="font-weight:600">sem cortar nada</small></button>
+      <button class="${f.modo === 'recortar' ? 'on' : ''}" onclick="aj.f.modo='recortar';desenharAjuste()">✂️ Recortar<br><small style="font-weight:600">preenche o espaço</small></button>
+    </div>
+    <div class="ajuste">
+      <div style="text-align:center">
+        <div class="prev-card" id="prevCard">${CF.fotoHTML(prev)}${f.modo === 'recortar' ? '<div class="dica-arr">Arraste para escolher a parte</div>' : ''}</div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:6px">Como fica no cardápio</div>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-top:8px"><div class="prev-mini">${CF.fotoHTML(prev)}</div><small style="color:var(--muted)">no carrinho</small></div>
+      </div>
+      <div>
+        ${f.modo === 'recortar' ? `
+          <label class="campo" style="margin-top:0">Zoom: <b id="zTxt">${Math.round(f.zoom * 100)}%</b></label>
+          <input type="range" min="1" max="3" step="0.05" value="${f.zoom}" oninput="aj.f.zoom=+this.value;$('zTxt').textContent=Math.round(this.value*100)+'%';atualizarPrev()">
+          <label class="campo">Mover para os lados</label>
+          <input type="range" min="0" max="100" value="${f.x}" id="rX" oninput="aj.f.x=+this.value;atualizarPrev()">
+          <label class="campo">Mover para cima / baixo</label>
+          <input type="range" min="0" max="100" value="${f.y}" id="rY" oninput="aj.f.y=+this.value;atualizarPrev()">
+          <button class="btn btn-sec btn-peq" style="margin-top:12px" onclick="aj.f={modo:'recortar',x:50,y:50,zoom:1};desenharAjuste()">↺ Voltar ao normal (sem zoom)</button>`
+        : `<p style="font-size:14px;color:var(--ink2);margin-top:4px">A foto aparece <b>do tamanho original, inteira</b>. O que sobrar nas laterais fica com um fundo desfocado da própria foto.</p>
+           <p style="font-size:13px;color:var(--muted);margin-top:8px">Boa para fotos deitadas, com preço ou texto escrito, ou quando o recorte deixa a foto feia.</p>`}
+      </div>
+    </div>
+    <div class="rod"><button class="btn btn-sec" onclick="fecharModal()">Cancelar</button><button class="btn btn-pri" onclick="salvarAjuste()">Salvar foto</button></div>`);
+  ligarArraste();
+}
+function atualizarPrev() {
+  const p = db.produtos[aj.i], prev = { ...p, foto: aj.f };
+  const card = $('prevCard'); if (!card) return;
+  const dica = card.querySelector('.dica-arr');
+  card.innerHTML = CF.fotoHTML(prev) + (dica ? dica.outerHTML : '');
+  document.querySelector('.prev-mini').innerHTML = CF.fotoHTML(prev);
+  if ($('rX')) { $('rX').value = aj.f.x; $('rY').value = aj.f.y; }
+}
+function ligarArraste() {
+  const card = $('prevCard'); if (!card || aj.f.modo !== 'recortar') return;
+  let ini = null;
+  card.onpointerdown = e => { ini = { px: e.clientX, py: e.clientY, x: aj.f.x, y: aj.f.y }; card.setPointerCapture(e.pointerId); card.classList.add('arrastando'); };
+  card.onpointermove = e => {
+    if (!ini) return;
+    const k = 120 / card.clientWidth;
+    aj.f.x = Math.max(0, Math.min(100, Math.round(ini.x - (e.clientX - ini.px) * k)));
+    aj.f.y = Math.max(0, Math.min(100, Math.round(ini.y - (e.clientY - ini.py) * k * card.clientWidth / card.clientHeight)));
+    atualizarPrev();
+  };
+  card.onpointerup = card.onpointercancel = () => { ini = null; card.classList.remove('arrastando'); };
+}
+function salvarAjuste() {
+  db.produtos[aj.i].foto = { ...aj.f };
+  CF.salvar(db); fecharModal(); toast('Foto ajustada ✓ Já aparece no site'); produtos();
+}
+
 function removerFoto(i) {
   abrirModal(`<h2>Remover a foto?</h2><p class="sub">Até colocar outra, o site mostra o logo da loja no lugar.</p>
     <div class="rod"><button class="btn btn-sec" onclick="fecharModal()">Voltar</button><button class="btn btn-pri" style="background:var(--off)" onclick="db.produtos[${i}].img='';CF.salvar(db);fecharModal();toast('Foto removida');produtos()">Remover</button></div>`);

@@ -1,7 +1,7 @@
 /* Frangos & Assados — dados da demonstração (salvos no navegador)
    Na versão final estes dados ficam no Firebase. */
 (function () {
-  const CHAVE = 'frangos_assados_demo_v3';
+  const CHAVE = 'frangos_assados_demo_v5';
 
   const ITENS_ESTOQUE = [
     { id: 'frango',   nome: 'Frangos',            un: 'un',     icone: '🍗', aviso1: 10, aviso2: 5 },
@@ -13,16 +13,16 @@
   ];
 
   const PRODUTOS_PADRAO = [
-    { id: 'frango-com-polenta', nome: 'Frango com polenta', preco: 60, img: 'img/frango.jpg',
+    { id: 'frango-com-polenta', nome: 'Frango com polenta', preco: 60, img: 'img/frango.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
       desc: 'Frango bem assadinho com o nosso tempero tradicional, acompanhado de uma porção da nossa famosa polenta frita!',
       consumo: { frango: 1, polenta: 1 }, ativo: true, destaque: 'Mais pedido', categoria: 'Assados' },
-    { id: 'meio-frango-com-polenta', nome: '½ frango com polenta', preco: 32, img: 'img/meio-frango.jpg',
+    { id: 'meio-frango-com-polenta', nome: '½ frango com polenta', preco: 32, img: 'img/meio-frango.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
       desc: 'Metade de um frango bem assadinho com o nosso tempero tradicional, acompanhado de uma porção da nossa famosa polenta frita!',
       consumo: { frango: 0.5, polenta: 1 }, ativo: true, destaque: '', categoria: 'Assados' },
-    { id: 'polenta-extra', nome: 'Polenta extra', preco: 5, img: 'img/polenta.jpg',
+    { id: 'polenta-extra', nome: 'Polenta extra', preco: 5, img: 'img/polenta.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
       desc: 'Nossa famosa polenta frita. Depois de experimentar, a polenta extra não vai ser mais opção! Porção com 6 pedaços.',
       consumo: { polenta: 1 }, ativo: true, destaque: '', categoria: 'Acompanhamentos' },
-    { id: 'salada-de-maionese', nome: 'Salada de maionese', preco: 14, img: 'img/maionese.jpg',
+    { id: 'salada-de-maionese', nome: 'Salada de maionese', preco: 14, img: 'img/maionese.jpg', foto: { modo: 'recortar', x: 50, y: 50, zoom: 1 },
       desc: 'Porção perfeita para um almoço. Salada fresquinha feita no dia, com cebola e salsinha trituradas e temperada com carinho! Porção de 500 g.',
       consumo: { maionese: 1 }, ativo: true, destaque: 'Feita no dia', categoria: 'Acompanhamentos' },
     { id: 'coca-cola-2l', nome: 'Coca-Cola 2 L', preco: 15, img: 'img/coca.jpg',
@@ -266,7 +266,27 @@
     return m >= hi * 60 + mi && m < hf * 60 + mf;
   }
 
+  /* foto do produto respeitando o ajuste escolhido no painel:
+     inteira  = mostra a foto toda, sem cortar, com fundo desfocado
+     recortar = preenche o espaço; dá para dar zoom e escolher a parte que aparece */
+  function fotoHTML(p, alt) {
+    const src = p.img || 'img/logo.png';
+    if (!p.img) return `<div class="fx fx-logo"><img src="${src}" alt="${alt || ''}" loading="lazy"></div>`;
+    const f = Object.assign({ modo: 'recortar', x: 50, y: 50, zoom: 1 }, p.foto || {});
+    if (f.modo === 'inteira') {
+      return `<div class="fx fx-inteira"><img class="fx-fundo" src="${src}" alt="" aria-hidden="true" loading="lazy"><img class="fx-img" src="${src}" alt="${alt || ''}" loading="lazy"></div>`;
+    }
+    return `<div class="fx"><img class="fx-img" src="${src}" alt="${alt || ''}" loading="lazy" style="object-fit:cover;object-position:${f.x}% ${f.y}%;transform:scale(${f.zoom});transform-origin:${f.x}% ${f.y}%"></div>`;
+  }
+  const FOTO_CSS = `.fx{position:relative;width:100%;height:100%;overflow:hidden;background:#f6efe7}
+    .fx img{display:block;width:100%;height:100%}
+    .fx.fx-inteira img.fx-fundo{position:absolute;inset:-12%;width:124%;height:124%;object-fit:cover;filter:blur(16px) brightness(.95);opacity:.85}
+    .fx.fx-inteira img.fx-img{position:relative;object-fit:contain}
+    .fx-logo{background:#fff}.fx.fx-logo img{object-fit:contain;padding:14%}`;
+  try { const st = document.createElement('style'); st.textContent = FOTO_CSS; document.head.appendChild(st); } catch (e) {}
+
   window.CF = {
+    fotoHTML,
     ITENS_ESTOQUE, carregar, salvar, restaurar, saldo, disponivel, consumoDe,
     registrarPedido, cancelarPedido, diasRetirada, horariosRetirada, lojaAberta,
     brl, num, dataISO, pad, uid
